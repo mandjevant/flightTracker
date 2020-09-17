@@ -1,8 +1,5 @@
 from flask import Flask, jsonify, redirect, render_template, session, url_for
-from authlib.integrations.flask_client import OAuth
-from six.moves.urllib.parse import urlencode
-from werkzeug.exceptions import HTTPException
-from functools import wraps
+from opensky_api import OpenSkyApi, StateVector
 import configparser
 import json
 import sys
@@ -34,82 +31,50 @@ if not Config.initiate_config():
     sys.exit()
 
 
-AUTH0_CALLBACK_URL = Config.conf.get('CONSTANTS', 'AUTH0_CALLBACK_URL')
-AUTH0_CLIENT_ID = Config.conf.get('CONSTANTS', 'AUTH0_CLIENT_ID')
-AUTH0_CLIENT_SECRET = Config.conf.get('CONSTANTS', 'AUTH0_CLIENT_SECRET')
-AUTH0_DOMAIN = Config.conf.get('CONSTANTS', 'AUTH0_DOMAIN')
-AUTH0_BASE_URL = 'https://' + AUTH0_DOMAIN
-AUTH0_AUDIENCE = Config.conf.get('CONSTANTS', 'AUTH0_AUDIENCE')
-EMAIL = Config.conf.get('CONSTANTS', 'EMAIL')
-
-
 app = Flask(__name__)
 app.secret_key = Config.conf.get('CONSTANTS', 'SECRET_KEY')
-
-oauth = OAuth(app)
-
-auth0 = oauth.register(
-    'auth0',
-    client_id=AUTH0_CLIENT_ID,
-    client_secret=AUTH0_CLIENT_SECRET,
-    api_base_url=AUTH0_BASE_URL,
-    access_token_url=AUTH0_BASE_URL+'/oauth/token',
-    authorize_url=AUTH0_BASE_URL+'/authorize',
-    client_kwargs={
-        'scope': EMAIL,
-    },
-)
+openskyAPI = OpenSkyApi(username=Config.conf.get('OPENSKY', 'USERNAME'),
+                        password=Config.conf.get('OPENSKY', 'PASSWORD'))
 
 
-def requires_auth(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if 'profile' not in session:
-            # Redirect to Login page here
-            return redirect('/')
-        return f(*args, **kwargs)
-
-    return decorated
-
-
-# Here we're using the /callback route.
-@app.route('/callback')
-def callback_handling():
-    # Handles response from token endpoint
-    auth0.authorize_access_token()
-    resp = auth0.get('userinfo')
-    userinfo = resp.json()
-
-    # Store the user information in flask session.
-    session['jwt_payload'] = userinfo
-    session['profile'] = {
-        'user_id': userinfo['sub'],
-        'name': userinfo['name'],
-        'picture': userinfo['picture']
-    }
-    return redirect('/dashboard')
+def jsonify_vector(vector: StateVector):
+    return jsonify(
+        {'baro_altitude': vector.baro_altitude,
+         'callsign': vector.callsign,
+         'geo_altitude': vector.geo_altitude,
+         'heading': vector.heading,
+         'icao24': vector.icao24,
+         'last_contact': vector.last_contact,
+         'latitude': vector.latitude,
+         'longitude': vector.longitude,
+         'on_ground': vector.on_ground,
+         'origin_country': vector.origin_country,
+         'position_source': vector.position_source,
+         'sensors': vector.sensors,
+         'spi': vector.spi,
+         'squawk': vector.squawk,
+         'time_position': vector.time_position,
+         'velocity': vector.velocity,
+         'vertical_rate': vector.vertical_rate
+         }
+    )
 
 
-@app.route('/login')
-def login():
-    return auth0.authorize_redirect(redirect_uri=AUTH0_CALLBACK_URL)
+@app.route('/')
+def main():
+    return "Working"
 
 
 @app.route('/dashboard')
-@requires_auth
 def dashboard():
-    return render_template('dashboard.html',
-                           userinfo=session['profile'],
-                           userinfo_pretty=json.dumps(session['jwt_payload'], indent=4))
+    return render_template("dashboard.html")
 
 
-@app.route('/logout')
-def logout():
-    # Clear session stored data
-    session.clear()
-    # Redirect user to logout endpoint
-    params = {'returnTo': url_for('login', _external=True), 'client_id': AUTH0_CLIENT_ID}
-    return redirect(auth0.api_base_url + '/v2/logout?' + urlencode(params))
+@app.route('/openskytest')
+def opensky_test():
+    states = openskyAPI.get_states()
+
+    return jsonify_vector(states.states[0])
 
 
 if __name__ == '__main__':

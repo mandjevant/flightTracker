@@ -77,5 +77,10 @@ def opensky_test():
     return jsonify_vector(states.states[0])
 
 
+@app.route('/input')
+def input_form():
+    return render_template("input.html")
+
+
 if __name__ == '__main__':
     app.run(debug=True)

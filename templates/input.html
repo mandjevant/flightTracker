@@ -20,15 +20,42 @@
         <div class="drop">
             <details>
                 <summary>Add Flight</summary>
-                <p>Add a flight.</p>
+                <div class="dropped">
+                    <p>Add a flight.</p>
+                    <form method="POST">
+                        <label>
+                            Enter the call sign:
+                            <input type="text" id="add_flight" name="add_flight" placeholder="Call sign...">
+                        </label>
+                        <input type="submit" value="Add flight">
+                    </form>
+                </div>
             </details>
             <details>
                 <summary>Edit Flight</summary>
-                <p>Edit a flight.</p>
+                <div class="dropped">
+                    <p>Edit a flight.</p>
+                    <form method="POST">
+                        <label>
+                            Enter the call sign:
+                            <input type="text" id="edit_flight" name="edit_flight" placeholder="Call sign...">
+                        </label>
+                        <input type="submit" value="Edit flight">
+                    </form>
+                </div>
             </details>
             <details>
                 <summary>Remove Flight</summary>
-                <p>Remove a flight.</p>
+                <div class="dropped">
+                    <p>Remove a flight.</p>
+                    <form method="POST">
+                        <label>
+                            Enter the call sign:
+                            <input type="text" id="remove_flight" name="remove_flight" placeholder="Call sign...">
+                        </label>
+                        <input type="submit" value="Remove flight">
+                    </form>
+                </div>
             </details>
         </div>
     </div>

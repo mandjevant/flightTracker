@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, redirect, render_template, session, url_for
+from flask import Flask, jsonify, request, render_template
 from opensky_api import OpenSkyApi, StateVector
 import configparser
 import json
@@ -80,6 +80,24 @@ def opensky_test():
 @app.route('/input')
 def input_form():
     return render_template("input.html")
+
+
+@app.route('/input', methods=['POST'])
+def add_flight():
+    add = request.form['add_flight']
+    edit = request.form['edit_flight']
+    remove = request.form['remove_flight']
+
+    if add:
+        print(f"Adding flight: {add}")
+
+    if edit:
+        print(f"Editing flight: {edit}")
+
+    if remove:
+        print(f"Removing flight: {remove}")
+
+    return "Success!"
 
 
 if __name__ == '__main__':

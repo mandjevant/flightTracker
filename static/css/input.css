@@ -42,18 +42,48 @@ details > summary {
     cursor: pointer;
 }
 
-details > p {
+details > .dropped {
     display: flex;
+    flex-direction: column;
     background-color: #99a4af;
     padding: 15px;
-    /*margin: 15px 15px 10px 15px;*/
-    margin-right: 15px;
-    margin-left: 15px;
+    margin: 15px 15px 10px 15px;
     box-shadow: 0 2px 8px -4px rgba(0, 0, 0, 0.21);
-    border-radius: 40px;
+    border-radius: 30px;
     border: none;
     width: fit-content;
     height: fit-content;
+}
+
+details > .dropped input[type=submit] {
+    display: flex;
+    background-color: #456281;
+    color: white;
+    padding: 15px;
+    box-shadow: 0 2px 8px -4px rgba(90, 90, 90, 0.21);
+    border-radius: 40px;
+    width: 100%;
+    font-weight: bold;
+    text-transform: capitalize;
+    margin-right: 15px;
+    margin-top: 15px;
+}
+
+details > .dropped p {
+    margin-top: 6px;
+}
+
+details > .dropped input[type=text] {
+    padding: 2px 3px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-left: 5px;
+}
+
+details > .dropped label {
+    display: flex;
 }
 
 details > summary:hover {

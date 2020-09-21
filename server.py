@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, render_template
 from opensky_api import OpenSkyApi, StateVector
+from app.forms import addFlightForm, editFlightForm, removeFlightForm
 import configparser
-import json
 import sys
 import os
 
@@ -77,27 +77,49 @@ def opensky_test():
     return jsonify_vector(states.states[0])
 
 
-@app.route('/input')
+@app.route('/input', methods=['GET'])
 def input_form():
-    return render_template("input.html")
+    add_form = addFlightForm()
+    edit_form = editFlightForm()
+    remove_form = removeFlightForm()
+
+    return render_template("input.html", add_form=add_form, edit_form=edit_form, remove_form=remove_form)
 
 
-@app.route('/input', methods=['POST'])
+@app.route('/add_form', methods=['POST'])
 def add_flight():
-    add = request.form['add_flight']
-    edit = request.form['edit_flight']
-    remove = request.form['remove_flight']
+    add_form = addFlightForm()
+    edit_form = editFlightForm()
+    remove_form = removeFlightForm()
 
-    if add:
-        print(f"Adding flight: {add}")
+    if add_form.validate_on_submit():
+        return 'adding!'
 
-    if edit:
-        print(f"Editing flight: {edit}")
+    return render_template("input.html", add_form=add_form, edit_form=edit_form, remove_form=remove_form)
 
-    if remove:
-        print(f"Removing flight: {remove}")
 
-    return "Success!"
+@app.route('/edit_form', methods=['POST'])
+def edit_flight():
+    add_form = addFlightForm()
+    edit_form = editFlightForm()
+    remove_form = removeFlightForm()
+
+    if edit_form.validate_on_submit():
+        return 'editing!'
+
+    return render_template("input.html", add_form=add_form, edit_form=edit_form, remove_form=remove_form)
+
+
+@app.route('/remove_form', methods=['POST'])
+def remove_flight():
+    add_form = addFlightForm()
+    edit_form = editFlightForm()
+    remove_form = removeFlightForm()
+
+    if remove_form.validate_on_submit():
+        return 'removing!'
+
+    return render_template("input.html", add_form=add_form, edit_form=edit_form, remove_form=remove_form)
 
 
 if __name__ == '__main__':

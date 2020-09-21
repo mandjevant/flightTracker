@@ -67,6 +67,11 @@ details > .dropped input[type=submit] {
     text-transform: capitalize;
     margin-right: 15px;
     margin-top: 15px;
+    border-color: #456281;
+}
+
+details > .dropped input[type=submit]:active {
+    border-color: #2a3c4f;
 }
 
 details > .dropped p {
@@ -79,7 +84,7 @@ details > .dropped input[type=text] {
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
-    margin-left: 5px;
+    margin-left: 3px;
 }
 
 details > .dropped label {

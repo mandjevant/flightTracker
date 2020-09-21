@@ -22,12 +22,9 @@
                 <summary>Add Flight</summary>
                 <div class="dropped">
                     <p>Add a flight.</p>
-                    <form method="POST">
-                        <label>
-                            Enter the call sign:
-                            <input type="text" id="add_flight" name="add_flight" placeholder="Call sign...">
-                        </label>
-                        <input type="submit" value="Add flight">
+                    <form method="POST" action="{{ url_for('add_flight') }}">
+                        {{ add_form.callSign }}
+                        {{ add_form.submit }}
                     </form>
                 </div>
             </details>
@@ -35,12 +32,9 @@
                 <summary>Edit Flight</summary>
                 <div class="dropped">
                     <p>Edit a flight.</p>
-                    <form method="POST">
-                        <label>
-                            Enter the call sign:
-                            <input type="text" id="edit_flight" name="edit_flight" placeholder="Call sign...">
-                        </label>
-                        <input type="submit" value="Edit flight">
+                    <form method="POST" action="{{ url_for('edit_flight') }}">
+                        {{ edit_form.callSign }}
+                        {{ edit_form.submit }}
                     </form>
                 </div>
             </details>
@@ -48,12 +42,9 @@
                 <summary>Remove Flight</summary>
                 <div class="dropped">
                     <p>Remove a flight.</p>
-                    <form method="POST">
-                        <label>
-                            Enter the call sign:
-                            <input type="text" id="remove_flight" name="remove_flight" placeholder="Call sign...">
-                        </label>
-                        <input type="submit" value="Remove flight">
+                    <form method="POST" action="{{ url_for('remove_flight') }}">
+                        {{ remove_form.callSign }}
+                        {{ remove_form.submit }}
                     </form>
                 </div>
             </details>

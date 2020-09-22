@@ -38,4 +38,4 @@ app.secret_key = Config.conf.get('CONSTANTS', 'SECRET_KEY')
 openskyAPI = OpenSkyApi(username=Config.conf.get('OPENSKY', 'USERNAME'),
                         password=Config.conf.get('OPENSKY', 'PASSWORD'))
 
-from app import routes, models
+from app import routes, models, errors

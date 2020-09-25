@@ -1,24 +1,20 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <link rel="icon" type="image/ico" href="../static/images/favicon.ico">
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="description" content="500 error page for flight tracker">
-    <meta name="author" content="Pim">
+{% extends "base.html" %}
 
-    <link rel="stylesheet" href="../static/css/error.css">
-    <title>Error</title>
-</head>
-<body class="">
-    <div class="container">
-        <h1>500 Error | Internal Server Error</h1>
-        <p><a href="dashboard.html">Return to the dashboard</a></p>
-    </div>
+{% block description %}
+<meta name="description" content="500 error page for flight tracker">
+{% endblock %}
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="../static/js/smoothscroll.js"></script>
-</body>
-</html>
+{% block imports %}
+<link rel="stylesheet" href="../static/css/error.css">
+{% endblock %}
+
+{% block title %}
+<title>Error</title>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>500 Error | Internal Server Error</h1>
+    <p><a href="{{ url_for('dashboard') }}">Return to the dashboard</a></p>
+</div>
+{% endblock %}

@@ -38,4 +38,7 @@ app.secret_key = Config.conf.get('CONSTANTS', 'SECRET_KEY')
 openskyAPI = OpenSkyApi(username=Config.conf.get('OPENSKY', 'USERNAME'),
                         password=Config.conf.get('OPENSKY', 'PASSWORD'))
 
+flightStatsAppID = Config.conf.get('FLIGHTSTATS', 'APP_ID')
+flightStatsAppKey = Config.conf.get('FLIGHTSTATS', 'APP_KEY')
+
 from app import routes, models, errors

@@ -44,6 +44,7 @@
                 <form method="POST" action="{{ url_for('add_flight') }}">
                     {{ add_form.csrf_token }}
                     {{ add_form.callSign }}
+                    {{ add_form.date }}
                     {{ add_form.submit }}
                 </form>
             </div>

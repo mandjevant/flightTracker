@@ -24,12 +24,12 @@ class Flight(db.Model):
     flight_to = db.Column(db.String)
     airline = db.Column(db.String)
     aircraft = db.Column(db.VARCHAR)
-    flight_time = db.Column(db.Time)
+    flight_time = db.Column(db.INT)
     date = db.Column(db.Date)
-    scheduled_time_departure = db.Column(db.Time)
-    actual_time_departure = db.Column(db.Time)
-    scheduled_time_arrival = db.Column(db.Time)
-    actual_time_arrival = db.Column(db.Time)
+    scheduled_time_departure = db.Column(db.DateTime)
+    actual_time_departure = db.Column(db.DateTime)
+    scheduled_time_arrival = db.Column(db.DateTime)
+    actual_time_arrival = db.Column(db.DateTime)
 
     def __repr__(self):
         return f"<FlightNumber {self.flight_number}>"

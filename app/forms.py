@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, DateField
 from wtforms.validators import DataRequired
+import datetime
 
 
 class addFlightForm(FlaskForm):
@@ -8,6 +9,11 @@ class addFlightForm(FlaskForm):
                            validators=[DataRequired()],
                            description="Add a flight",
                            default="Call sign...")
+    date = DateField(label='Date of flight',
+                     validators=[DataRequired()],
+                     description="Enter date of flight",
+                     default=datetime.date.today,
+                     format="%Y-%m-%d")
     submit = SubmitField('Add flight')
 
 

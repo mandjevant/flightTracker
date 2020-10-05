@@ -30,4 +30,9 @@ class removeFlightForm(FlaskForm):
                            validators=[DataRequired()],
                            description="Remove a flight",
                            default="Call sign...")
+    date = DateField(label='Date of flight',
+                     validators=[DataRequired()],
+                     description="Enter date of flight",
+                     default=datetime.date.today,
+                     format="%Y-%m-%d")
     submit = SubmitField('Remove flight')

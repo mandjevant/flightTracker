@@ -67,6 +67,7 @@
                 <form method="POST" action="{{ url_for('remove_flight') }}">
                     {{ add_form.csrf_token }}
                     {{ remove_form.callSign }}
+                    {{ remove_form.date }}
                     {{ remove_form.submit }}
                 </form>
             </div>

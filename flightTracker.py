@@ -3,5 +3,5 @@ from app.models import User, Flight
 
 
 @app.shell_context_processor
-def make_shell_context():
+def make_shell_context() -> dict:
     return {'db': db, 'User': User, 'Flight': Flight}

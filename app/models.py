@@ -1,20 +1,33 @@
-from app import db
+from app import db, login
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(64), index=True, unique=True)
     password_hash = db.Column(db.String(128))
+    role = db.Column(db.String(64), default="viewer")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<User {self.username}>"
 
-    def set_password(self, password):
+    def set_password(self, password) -> None:
         self.password_hash = generate_password_hash(password)
 
-    def check_password(self, password):
+    def check_password(self, password) -> bool:
         return check_password_hash(self.password_hash, password)
+
+    def set_admin(self) -> None:
+        self.role = "admin"
+
+    def is_admin(self) -> bool:
+        return self.role == "admin"
+
+
+@login.user_loader
+def load_user(user_id: int):
+    return User.query.get(user_id)
 
 
 class Flight(db.Model):
@@ -31,5 +44,5 @@ class Flight(db.Model):
     scheduled_time_arrival = db.Column(db.DateTime)
     actual_time_arrival = db.Column(db.DateTime)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<FlightNumber {self.flight_number}>"

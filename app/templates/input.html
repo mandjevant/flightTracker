@@ -13,25 +13,6 @@
 {% endblock %}
 
 {% block content %}
-<div class="nav-menu">
-    <div class="nav-menu-logo">
-        <img src="../static/images/Airplane.jpg" alt="">
-    </div>
-    <nav id="menu-nav-wrap">
-        <ul class="menu-main-nav">
-            <li>
-                <a href="dashboard" title="Dashboard" class="nav-link">Dashboard</a>
-            </li>
-            <li class="current">
-                <a href="input" title="Input" class="nav-link">Input</a>
-            </li>
-            <li>
-                <a href="openskytest" title="OpenSkyTest" class="nav-link">OpenSkyTest</a>
-            </li>
-        </ul>
-    </nav>
-</div>
-
 <div class="container">
     <div class="picture">
         <img src="../static/images/Airplane.jpg" alt="Airplane">
@@ -42,10 +23,10 @@
             <div class="dropped">
                 <p>Add a flight.</p>
                 <form method="POST" action="{{ url_for('add_flight') }}">
-                    {{ add_form.csrf_token }}
-                    {{ add_form.callSign }}
-                    {{ add_form.date }}
-                    {{ add_form.submit }}
+                    {{ add_flight_form.csrf_token }}
+                    {{ add_flight_form.callSign }}
+                    {{ add_flight_form.date }}
+                    {{ add_flight_form.submit }}
                 </form>
             </div>
         </details>
@@ -54,9 +35,9 @@
             <div class="dropped">
                 <p>Edit a flight.</p>
                 <form method="POST" action="{{ url_for('edit_flight') }}">
-                    {{ add_form.csrf_token }}
-                    {{ edit_form.callSign }}
-                    {{ edit_form.submit }}
+                    {{ edit_flight_form.csrf_token }}
+                    {{ edit_flight_form.callSign }}
+                    {{ edit_flight_form.submit }}
                 </form>
             </div>
         </details>
@@ -65,10 +46,33 @@
             <div class="dropped">
                 <p>Remove a flight.</p>
                 <form method="POST" action="{{ url_for('remove_flight') }}">
-                    {{ add_form.csrf_token }}
-                    {{ remove_form.callSign }}
-                    {{ remove_form.date }}
-                    {{ remove_form.submit }}
+                    {{ remove_flight_form.csrf_token }}
+                    {{ remove_flight_form.callSign }}
+                    {{ remove_flight_form.date }}
+                    {{ remove_flight_form.submit }}
+                </form>
+            </div>
+        </details>
+        <details>
+            <summary>Add User</summary>
+            <div class="dropped">
+                <p>Add a user.</p>
+                <form method="POST" action="{{ url_for('add_user') }}">
+                    {{ add_user_form.csrf_token }}
+                    {{ add_user_form.username }}
+                    {{ add_user_form.is_admin }}
+                    {{ add_user_form.submit }}
+                </form>
+            </div>
+        </details>
+        <details>
+            <summary>Remove User</summary>
+            <div class="dropped">
+                <p>Remove a User.</p>
+                <form method="POST" action="{{ url_for('remove_user') }}">
+                    {{ remove_user_form.csrf_token }}
+                    {{ remove_user_form.username }}
+                    {{ remove_user_form.submit }}
                 </form>
             </div>
         </details>

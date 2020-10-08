@@ -1,6 +1,7 @@
 from flask import Flask
 from opensky_api import OpenSkyApi
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 import configparser
 import sys
 import os
@@ -10,7 +11,7 @@ class Config:
     conf = None
 
     @staticmethod
-    def initiate_config():
+    def initiate_config() -> bool:
         try:
             Config.conf = configparser.ConfigParser()
             if os.path.exists(os.getcwd() + '\\conf.ini'):
@@ -34,6 +35,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.path.absp
                                                                     'flightTracker.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app=app)
+login = LoginManager(app=app)
+login.login_view = "login"
 app.secret_key = Config.conf.get('CONSTANTS', 'SECRET_KEY')
 openskyAPI = OpenSkyApi(username=Config.conf.get('OPENSKY', 'USERNAME'),
                         password=Config.conf.get('OPENSKY', 'PASSWORD'))

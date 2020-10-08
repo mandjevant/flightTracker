@@ -20,7 +20,7 @@ p {
     margin: 0;
 }
 
-a {
+a.dashboard {
     color: #fe921f;
     text-decoration: underline;
 }

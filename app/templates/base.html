@@ -14,21 +14,53 @@
     {% block title %}{% endblock %}
 </head>
 <body class="">
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <div class=flashes>
-            {% for message in messages %}
-                {{ message }}
-            {% endfor %}
-            <button type="button" class="close" onclick="delete_flash(this)">close</button>
-            </div>
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class=flashes>
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+        <button type="button" class="close" onclick="delete_flash(this)">close</button>
+        </div>
+    {% endif %}
+{% endwith %}
+
+{% block content %}{% endblock %}
+
+<div class="nav-menu">
+    <div class="nav-menu-logo">
+        <img src="../static/images/Airplane.jpg" alt="">
+    </div>
+    <nav id="menu-nav-wrap">
+        {% if not current_user.is_anonymous %}
+        <ul class="menu-main-nav">
+            <li>
+                <a href="dashboard" title="Dashboard" class="nav-link">Dashboard</a>
+            </li>
+            {% if current_user.is_admin() %}
+            <li>
+                <a href="input" title="Input" class="nav-link">Input</a>
+            </li>
+            {% endif %}
+            <li>
+                <a href="openskytest" title="OpenSkyTest" class="nav-link">OpenSkyTest</a>
+            </li>
+            <li>
+                <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+            </li>
+        </ul>
+        {% else %}
+        <ul class="menu-main-nav">
+            <li>
+                <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+            </li>
+        </ul>
         {% endif %}
-    {% endwith %}
+    </nav>
+</div>
 
-    {% block content %}{% endblock %}
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="../static/js/smoothscroll.js"></script>
-  <script src="../static/js/delete_flash.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="../static/js/smoothscroll.js"></script>
+<script src="../static/js/delete_flash.js"></script>
 </body>
 </html>

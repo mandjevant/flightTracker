@@ -3,6 +3,8 @@ from opensky_api import StateVector
 from app.models import Flight
 from datetime import datetime, timedelta
 import typing
+import string
+import random
 
 
 def jsonify_vector(vector: StateVector):
@@ -69,5 +71,9 @@ def flight_retrieval(flight_request: dict, flight_int: typing.Optional[int] = 0)
                   scheduled_time_arrival=scheduled_time_arrival)
 
 
-def flights_exist(response: dict):
+def flights_exist(response: dict) -> bool:
     return len(response["flights"]) > 0
+
+
+def generate_random_password(password_length: int = 8) -> str:
+    return "".join(random.choices(string.ascii_letters + string.digits, k=password_length))

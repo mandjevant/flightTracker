@@ -14,12 +14,22 @@
 
 {% block content %}
 <div class="container">
-    <h1>Login</h1>
+    <h1>Sign in</h1>
     <form method="POST" action="{{ url_for('login') }}">
-        {{ login_form.csrf_token }}
-        {{ login_form.username }}
-        {{ login_form.password }}
+        <div class="login_form">
+            {{ login_form.csrf_token }}
+            <label for="username">Username</label>
+            {{ login_form.username }}
+            <label for="password">Password</label>
+            {{ login_form.password }}
+        </div>
+        <div class="checkbox_sep">
+            <br>
+            {{ login_form.remember_me }}
+            <label for="remember_me">Remember me</label>
+        </div>
         {{ login_form.submit }}
     </form>
+
 </div>
 {% endblock %}

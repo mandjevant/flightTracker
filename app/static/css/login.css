@@ -3,10 +3,13 @@
     background-color: #141d26;
     box-shadow: 0 2px 5px rgba(0,0,0,.25), 0 0 16px rgba(0,0,0,.22);
     border-radius: 35px;
-    padding: 35px;
+    padding: 45px;
     display: flex;
     flex-wrap: nowrap;
     flex-direction: column;
+    width: 15%;
+    font-size: large;
+    align-items: center;
 }
 
 h1 {
@@ -25,4 +28,60 @@ a.temporary {
     background-color: #456281;
     border-color: #456281;
     box-shadow: 0 2px 8px -4px rgba(90, 90, 90, 0.21);
+}
+
+input[type=submit] {
+    display: flex;
+    background-color: #456281;
+    color: white;
+    padding: 15px;
+    box-shadow: 0 2px 8px -4px rgba(90, 90, 90, 0.21);
+    border-radius: 40px;
+    width: 150%;
+    font-weight: bold;
+    text-transform: capitalize;
+    margin-right: 15px;
+    margin-top: 15px;
+    border-color: #456281;
+    margin-left: -35px;
+    font-size: large;
+}
+
+input[type=submit]:active {
+    border-color: #2a3c4f;
+}
+
+input[type=text], input[type=password] {
+    padding: 2px 3px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.checkbox_sep {
+    display: flex;
+    flex-direction: row;
+    color: white;
+    margin-top: 15px;
+    margin-bottom: 30px;
+}
+
+.login_form {
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+
+label[for=username], label[for=password] {
+    padding: 5px;
+    margin-top: 8px;
+    align-self: center;
+    margin-bottom: 4px;
+}
+
+label[for=remember_me] {
+    padding: 5px;
+    align-self: center;
+    color: white;
 }

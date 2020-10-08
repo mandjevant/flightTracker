@@ -91,3 +91,16 @@ details > summary:hover {
 details[open] > summary {
     background-color: #456281;
 }
+
+.checkbox_sep {
+    display: flex;
+    flex-direction: row;
+    color: white;
+    margin-top: 15px;
+    margin-bottom: 30px;
+}
+
+label[for=is_admin] {
+    padding-left: 5px;
+    align-self: center;
+}

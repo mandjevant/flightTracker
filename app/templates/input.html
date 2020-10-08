@@ -60,7 +60,10 @@
                 <form method="POST" action="{{ url_for('add_user') }}">
                     {{ add_user_form.csrf_token }}
                     {{ add_user_form.username }}
-                    {{ add_user_form.is_admin }}
+                    <div class="checkbox_sep">
+                        {{ add_user_form.is_admin }}
+                        <label for="is_admin">Administrator account?</label>
+                    </div>
                     {{ add_user_form.submit }}
                 </form>
             </div>

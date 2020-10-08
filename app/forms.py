@@ -43,7 +43,7 @@ class addUserForm(FlaskForm):
     username = StringField("Username",
                            validators=[DataRequired()],
                            description="New Username",
-                           default="New user")
+                           default="Username")
     is_admin = BooleanField("Admin",
                             default=False)
     submit = SubmitField("Add user")
@@ -58,19 +58,17 @@ class removeUserForm(FlaskForm):
     username = StringField("Username",
                            validators=[DataRequired()],
                            description="Remove Username",
-                           default="Remove user")
+                           default="Username")
     submit = SubmitField("Remove user")
 
 
 class loginForm(FlaskForm):
     username = StringField("Username",
                            validators=[DataRequired()],
-                           description="Username",
-                           default="Username")
+                           description="Username")
     password = PasswordField("Password",
                              validators=[DataRequired()],
-                             description="Password",
-                             default="Password")
+                             description="Password")
     remember_me = BooleanField("Remember Me",
                                default=True)
-    submit = SubmitField("Login")
+    submit = SubmitField("Sign in")

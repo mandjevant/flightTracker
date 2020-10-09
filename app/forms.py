@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask import flash
 from wtforms import StringField, SubmitField, DateField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, ValidationError
 from app.models import User
@@ -51,7 +52,48 @@ class addUserForm(FlaskForm):
     def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()
         if user is not None:
-            raise ValidationError('Please use a different username.')
+            flash("User already exists. Please use a different username.")
+            raise ValidationError("Please use a different username.")
+
+
+class upgradeUserForm(FlaskForm):
+    username = StringField("Username",
+                           validators=[DataRequired()],
+                           description="Username",
+                           default="Username")
+    submit = SubmitField("Upgrade user")
+
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user is None:
+            flash("User does not exist.")
+            raise ValidationError("User does not exist.")
+
+    def validate_admin(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user.is_admin():
+            flash("User is already an admin.")
+            raise ValidationError("User is already an admin.")
+
+
+class downgradeUserForm(FlaskForm):
+    username = StringField("Username",
+                           validators=[DataRequired()],
+                           description="Username",
+                           default="Username")
+    submit = SubmitField("Downgrade user")
+
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user is None:
+            flash("User does not exist.")
+            raise ValidationError("User does not exist.")
+
+    def validate_admin(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if not user.is_admin():
+            flash("User is not an admin.")
+            raise ValidationError("User is not an admin.")
 
 
 class removeUserForm(FlaskForm):
@@ -60,6 +102,12 @@ class removeUserForm(FlaskForm):
                            description="Remove Username",
                            default="Username")
     submit = SubmitField("Remove user")
+
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user is None:
+            flash("User does not exist.")
+            raise ValidationError("User does not exist.")
 
 
 class loginForm(FlaskForm):

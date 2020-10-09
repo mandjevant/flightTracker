@@ -21,6 +21,9 @@ class User(UserMixin, db.Model):
     def set_admin(self) -> None:
         self.role = "admin"
 
+    def revoke_admin(self) -> None:
+        self.role = "viewer"
+
     def is_admin(self) -> bool:
         return self.role == "admin"
 

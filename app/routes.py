@@ -1,7 +1,8 @@
 from flask import render_template, flash, redirect, url_for, abort
 from app import app, db, openskyAPI
 from app.models import User, Flight
-from app.forms import addFlightForm, editFlightForm, removeFlightForm, addUserForm, removeUserForm, loginForm
+from app.forms import addFlightForm, editFlightForm, removeFlightForm, addUserForm, upgradeUserForm, downgradeUserForm, \
+    removeUserForm, loginForm
 from app.appUtils import jsonify_vector, flight_number_parser, flights_exist, flight_retrieval, generate_random_password
 from app.flightstatsWrapper import flightStatsApi
 from flask_login import current_user, login_user, logout_user, login_required
@@ -82,6 +83,8 @@ def input_forms():
     edit_flight_form = editFlightForm()
     remove_flight_form = removeFlightForm()
     add_user_form = addUserForm()
+    upgrade_user_form = upgradeUserForm()
+    downgrade_user_form = downgradeUserForm()
     remove_user_form = removeUserForm()
     
     return render_template("input.html",
@@ -89,6 +92,8 @@ def input_forms():
                            edit_flight_form=edit_flight_form,
                            remove_flight_form=remove_flight_form,
                            add_user_form=add_user_form,
+                           upgrade_user_form=upgrade_user_form,
+                           downgrade_user_form=downgrade_user_form,
                            remove_user_form=remove_user_form)
 
 
@@ -173,6 +178,40 @@ def add_user():
         db.session.commit()
 
         flash(f"User added.\nTheir temporary password is: \n{temp_pass}")
+
+    return redirect(url_for("input_forms"))
+
+
+@app.route("/upgrade_user_form", methods=["POST"])
+@login_required
+@admin_required
+def upgrade_user():
+    upgrade_user_form = upgradeUserForm()
+
+    if upgrade_user_form.validate_on_submit():
+        user_to_upgrade = User.query.filter_by(username=upgrade_user_form.username.data).first()
+        user_to_upgrade.set_admin()
+
+        db.session.commit()
+
+        flash(f"{upgrade_user_form.username.data} is upgraded to an admin account.")
+
+    return redirect(url_for("input_forms"))
+
+
+@app.route("/downgrade_user_form", methods=["POST"])
+@login_required
+@admin_required
+def downgrade_user():
+    downgrade_user_form = downgradeUserForm()
+
+    if downgrade_user_form.validate_on_submit():
+        user_to_downgrade = User.query.filter_by(username=downgrade_user_form.username.data).first()
+        user_to_downgrade.revoke_admin()
+
+        db.session.commit()
+
+        flash(f"{downgrade_user_form.username.data} is downgraded to a viewer account.")
 
     return redirect(url_for("input_forms"))
 

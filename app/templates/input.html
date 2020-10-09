@@ -13,72 +13,104 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="picture">
-        <img src="../static/images/Airplane.jpg" alt="Airplane">
+<div class="shadow_container">
+    <div class="flight_container">
+        <div class="picture">
+            <img src="../static/images/Airplane.jpg" alt="Airplane">
+        </div>
+        <div class="drop">
+            <details>
+                <summary>Add Flight</summary>
+                <div class="dropped">
+                    <p>Add a flight.</p>
+                    <form method="POST" action="{{ url_for('add_flight') }}">
+                        {{ add_flight_form.csrf_token }}
+                        {{ add_flight_form.callSign }}
+                        {{ add_flight_form.date }}
+                        {{ add_flight_form.submit }}
+                    </form>
+                </div>
+            </details>
+            <details>
+                <summary>Edit Flight</summary>
+                <div class="dropped">
+                    <p>Edit a flight.</p>
+                    <form method="POST" action="{{ url_for('edit_flight') }}">
+                        {{ edit_flight_form.csrf_token }}
+                        {{ edit_flight_form.callSign }}
+                        {{ edit_flight_form.submit }}
+                    </form>
+                </div>
+            </details>
+            <details>
+                <summary>Remove Flight</summary>
+                <div class="dropped">
+                    <p>Remove a flight.</p>
+                    <form method="POST" action="{{ url_for('remove_flight') }}">
+                        {{ remove_flight_form.csrf_token }}
+                        {{ remove_flight_form.callSign }}
+                        {{ remove_flight_form.date }}
+                        {{ remove_flight_form.submit }}
+                    </form>
+                </div>
+            </details>
+        </div>
     </div>
-    <div class="drop">
-        <details>
-            <summary>Add Flight</summary>
-            <div class="dropped">
-                <p>Add a flight.</p>
-                <form method="POST" action="{{ url_for('add_flight') }}">
-                    {{ add_flight_form.csrf_token }}
-                    {{ add_flight_form.callSign }}
-                    {{ add_flight_form.date }}
-                    {{ add_flight_form.submit }}
-                </form>
-            </div>
-        </details>
-        <details>
-            <summary>Edit Flight</summary>
-            <div class="dropped">
-                <p>Edit a flight.</p>
-                <form method="POST" action="{{ url_for('edit_flight') }}">
-                    {{ edit_flight_form.csrf_token }}
-                    {{ edit_flight_form.callSign }}
-                    {{ edit_flight_form.submit }}
-                </form>
-            </div>
-        </details>
-        <details>
-            <summary>Remove Flight</summary>
-            <div class="dropped">
-                <p>Remove a flight.</p>
-                <form method="POST" action="{{ url_for('remove_flight') }}">
-                    {{ remove_flight_form.csrf_token }}
-                    {{ remove_flight_form.callSign }}
-                    {{ remove_flight_form.date }}
-                    {{ remove_flight_form.submit }}
-                </form>
-            </div>
-        </details>
-        <details>
-            <summary>Add User</summary>
-            <div class="dropped">
-                <p>Add a user.</p>
-                <form method="POST" action="{{ url_for('add_user') }}">
-                    {{ add_user_form.csrf_token }}
-                    {{ add_user_form.username }}
-                    <div class="checkbox_sep">
-                        {{ add_user_form.is_admin }}
-                        <label for="is_admin">Administrator account?</label>
-                    </div>
-                    {{ add_user_form.submit }}
-                </form>
-            </div>
-        </details>
-        <details>
-            <summary>Remove User</summary>
-            <div class="dropped">
-                <p>Remove a User.</p>
-                <form method="POST" action="{{ url_for('remove_user') }}">
-                    {{ remove_user_form.csrf_token }}
-                    {{ remove_user_form.username }}
-                    {{ remove_user_form.submit }}
-                </form>
-            </div>
-        </details>
+
+    <div class="user_container">
+        <div class="picture">
+            <img src="../static/images/Headcount.jpg" alt="Airplane">
+        </div>
+        <div class="drop">
+            <details>
+                <summary>Add User</summary>
+                <div class="dropped">
+                    <p>Add a user.</p>
+                    <form method="POST" action="{{ url_for('add_user') }}">
+                        {{ add_user_form.csrf_token }}
+                        {{ add_user_form.username }}
+                        <div class="checkbox_sep">
+                            {{ add_user_form.is_admin }}
+                            <label for="is_admin">Administrator account?</label>
+                        </div>
+                        {{ add_user_form.submit }}
+                    </form>
+                </div>
+            </details>
+            <details>
+                <summary>Upgrade User</summary>
+                <div class="dropped">
+                    <p>Upgrade a user to Admin.</p>
+                    <form method="POST" action="{{ url_for('upgrade_user') }}">
+                        {{ upgrade_user_form.csrf_token }}
+                        {{ upgrade_user_form.username }}
+                        {{ upgrade_user_form.submit }}
+                    </form>
+                </div>
+            </details>
+            <details>
+                <summary>Downgrade User</summary>
+                <div class="dropped">
+                    <p>Downgrade a user to Viewer.</p>
+                    <form method="POST" action="{{ url_for('downgrade_user') }}">
+                        {{ downgrade_user_form.csrf_token }}
+                        {{ downgrade_user_form.username }}
+                        {{ downgrade_user_form.submit }}
+                    </form>
+                </div>
+            </details>
+            <details>
+                <summary>Remove User</summary>
+                <div class="dropped">
+                    <p>Remove a User.</p>
+                    <form method="POST" action="{{ url_for('remove_user') }}">
+                        {{ remove_user_form.csrf_token }}
+                        {{ remove_user_form.username }}
+                        {{ remove_user_form.submit }}
+                    </form>
+                </div>
+            </details>
+        </div>
     </div>
 </div>
 {% endblock %}

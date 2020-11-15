@@ -1,8 +1,8 @@
 from flask import render_template, flash, redirect, url_for, abort
 from app import app, db, openskyAPI
 from app.models import User, Flight
-from app.forms import addFlightForm, editFlightForm, removeFlightForm, addUserForm, upgradeUserForm, downgradeUserForm, \
-    removeUserForm, loginForm
+from app.forms import addFlightForm, editFlightForm, removeFlightForm, addUserForm, upgradeUserForm, \
+    downgradeUserForm, removeUserForm, loginForm, changePasswordForm
 from app.appUtils import jsonify_vector, flight_number_parser, flights_exist, flight_retrieval, generate_random_password
 from app.flightstatsWrapper import flightStatsApi
 from flask_login import current_user, login_user, logout_user, login_required
@@ -32,10 +32,48 @@ def all_results_temp():
     return str([flight.flight_number for flight in flights])
 
 
+@app.route("/profile", methods=["GET", "POST"])
+@login_required
+def profile():
+    change_password_form = changePasswordForm()
+
+    return render_template("user.html", change_password_form=change_password_form)
+
+
+@app.route("/change_password", methods=["POST"])
+@login_required
+def change_password():
+    change_password_form = changePasswordForm()
+
+    if change_password_form.validate_on_submit():
+        active_user = User.query.filter_by(username=current_user.username).first()
+        active_user.set_password(change_password_form.new_password.data)
+
+        db.session.commit()
+
+        flash("Password successfully changed!")
+
+    return redirect(url_for("profile"))
+
+
 @app.route("/dashboard", methods=["GET"])
 @login_required
 def dashboard():
-    return render_template("dashboard.html")
+    top_destinations = db.session.execute("SELECT flight_to, \
+                                                  COUNT(flight_to) as visits \
+                                           FROM Flight \
+                                           GROUP BY flight_to \
+                                           ORDER BY visits DESC \
+                                           LIMIT 10")
+
+    alter_top_destinations = db.session.execute("SELECT flight_to, \
+                                                        COUNT(flight_to) as visits \
+                                                 FROM Flight \
+                                                 GROUP BY flight_to \
+                                                 ORDER BY visits ASC \
+                                                 LIMIT 10")
+
+    return render_template("dashboard.html", top_destinations=top_destinations, alter_top_destinations=alter_top_destinations)
 
 
 @app.route("/", methods=["GET"])
@@ -43,7 +81,7 @@ def dashboard():
 def login():
     if current_user.is_authenticated:
         return redirect(url_for("dashboard"))
-    
+
     login_form = loginForm()
 
     if login_form.validate_on_submit():
@@ -86,7 +124,7 @@ def input_forms():
     upgrade_user_form = upgradeUserForm()
     downgrade_user_form = downgradeUserForm()
     remove_user_form = removeUserForm()
-    
+
     return render_template("input.html",
                            add_flight_form=add_flight_form,
                            edit_flight_form=edit_flight_form,

@@ -14,9 +14,43 @@
 
 {% block content %}
 <div class="container">
-    <button class="date">17/09/2020</button>
+<h1>Welcome to your dashboard</h1>
 
-    <h1>FlightTracker Dashboard</h1>
-    <p>The dashboard for flight tracker.</p>
+{% if top_destinations %}
+    <div class="sub-container">
+        <h3>Top destinations</h3>
+        <table class="top_destinations">
+            <tr class="col_names">
+                <th>Destination</th>
+                <th>Visits</th>
+            </tr>
+            {% for row in top_destinations %}
+                <tr class="col_values">
+                    <td>{{ row["flight_to"] }}</td>
+                    <td>{{ row["visits"] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endif %}
+
+{% if alter_top_destinations %}
+    <div class="sub-container">
+        <h3>Alter top destinations</h3>
+        <table class="alter_top_destinations">
+            <tr class="col_names">
+                <th>Destination</th>
+                <th>Visits</th>
+            </tr>
+            {% for row in alter_top_destinations %}
+                <tr class="col_values">
+                    <td>{{ row["flight_to"] }}</td>
+                    <td>{{ row["visits"] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endif %}
+
 </div>
 {% endblock %}

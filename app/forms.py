@@ -1,9 +1,56 @@
 from flask_wtf import FlaskForm
 from flask import flash
+from flask_login import current_user
 from wtforms import StringField, SubmitField, DateField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, ValidationError
 from app.models import User
 import datetime
+
+
+class NotEqualTo(object):
+    def __init__(self, fieldname):
+        self.fieldname = fieldname
+
+    def __call__(self, form, field):
+        try:
+            other = form[self.fieldname]
+        except KeyError:
+            raise ValidationError(field.gettext(f"Invalid field name {self.fieldname}."))
+
+        if field.data == other.data:
+            flash("Current password and new password must not be identical.")
+            raise ValidationError("Passwords are identical.")
+
+
+class ValidateOldPassword(object):
+    def __call__(self, form, field):
+        user = User.query.filter_by(username=current_user.username).first()
+        if not user.check_password(field.data):
+            flash("Wrong current password.")
+            raise ValidationError("Wrong current password.")
+
+
+class ValidateAdmin(object):
+    def __init__(self, is_admin: bool = True, message: str = "User is already an admin."):
+        self.is_admin = is_admin
+        self.message = message
+
+    def __call__(self, form, field):
+        user = User.query.filter_by(username=field.data).first()
+        if user.is_admin() == self.is_admin:
+            flash(self.message)
+            raise ValidationError(self.message)
+
+
+class ValidateUsername(object):
+    def __init__(self, message: str = "User does not exist"):
+        self.message = message
+
+    def __call__(self, form, field):
+        user = User.query.filter_by(username=field.data).first()
+        if user is None:
+            flash(self.message)
+            raise ValidationError(self.message)
 
 
 class addFlightForm(FlaskForm):
@@ -42,72 +89,39 @@ class removeFlightForm(FlaskForm):
 
 class addUserForm(FlaskForm):
     username = StringField("Username",
-                           validators=[DataRequired()],
+                           validators=[DataRequired(),
+                                       ValidateUsername(message="User already exists. "
+                                                                "Please use a different username.")],
                            description="New Username",
                            default="Username")
     is_admin = BooleanField("Admin",
                             default=False)
     submit = SubmitField("Add user")
 
-    def validate_username(self, username):
-        user = User.query.filter_by(username=username.data).first()
-        if user is not None:
-            flash("User already exists. Please use a different username.")
-            raise ValidationError("Please use a different username.")
-
 
 class upgradeUserForm(FlaskForm):
     username = StringField("Username",
-                           validators=[DataRequired()],
+                           validators=[DataRequired(), ValidateUsername(), ValidateAdmin()],
                            description="Username",
                            default="Username")
     submit = SubmitField("Upgrade user")
 
-    def validate_username(self, username):
-        user = User.query.filter_by(username=username.data).first()
-        if user is None:
-            flash("User does not exist.")
-            raise ValidationError("User does not exist.")
-
-    def validate_admin(self, username):
-        user = User.query.filter_by(username=username.data).first()
-        if user.is_admin():
-            flash("User is already an admin.")
-            raise ValidationError("User is already an admin.")
-
 
 class downgradeUserForm(FlaskForm):
     username = StringField("Username",
-                           validators=[DataRequired()],
+                           validators=[DataRequired(), ValidateUsername(),
+                                       ValidateAdmin(is_admin=False, message="User is not an admin.")],
                            description="Username",
                            default="Username")
     submit = SubmitField("Downgrade user")
 
-    def validate_username(self, username):
-        user = User.query.filter_by(username=username.data).first()
-        if user is None:
-            flash("User does not exist.")
-            raise ValidationError("User does not exist.")
-
-    def validate_admin(self, username):
-        user = User.query.filter_by(username=username.data).first()
-        if not user.is_admin():
-            flash("User is not an admin.")
-            raise ValidationError("User is not an admin.")
-
 
 class removeUserForm(FlaskForm):
     username = StringField("Username",
-                           validators=[DataRequired()],
+                           validators=[DataRequired(), ValidateUsername()],
                            description="Remove Username",
                            default="Username")
     submit = SubmitField("Remove user")
-
-    def validate_username(self, username):
-        user = User.query.filter_by(username=username.data).first()
-        if user is None:
-            flash("User does not exist.")
-            raise ValidationError("User does not exist.")
 
 
 class loginForm(FlaskForm):
@@ -120,3 +134,13 @@ class loginForm(FlaskForm):
     remember_me = BooleanField("Remember Me",
                                default=True)
     submit = SubmitField("Sign in")
+
+
+class changePasswordForm(FlaskForm):
+    current_password = StringField("Current password",
+                                   validators=[DataRequired(), ValidateOldPassword()],
+                                   description="Current password")
+    new_password = StringField("New password",
+                               validators=[DataRequired(), NotEqualTo("current_password")],
+                               description="New password")
+    submit = SubmitField("Change password")

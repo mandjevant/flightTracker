@@ -14,7 +14,15 @@ h1 {
     color: #cccccc;
 }
 
-details > summary {
+.text-capitalize {
+    text-transform: capitalize;
+}
+
+a {
+    text-decoration: None;
+}
+
+details > summary, .summary_div {
     display: flex;
     padding: 15px;
     width: 500px;

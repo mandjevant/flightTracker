@@ -14,7 +14,7 @@
 
 {% block content %}
 <div class="container">
-    <h1>Hello {{ current_user.username }}</h1>
+    <h1 class="text-capitalize">Hello {{ current_user.username }}</h1>
     <div class="drop">
         <details>
             <summary>Change Password</summary>
@@ -30,6 +30,8 @@
                 </form>
             </div>
         </details>
+
+        <a href="{{ url_for('logout') }}"><div class="summary_div">Logout</div></a>
     </div>
 </div>
 {% endblock %}

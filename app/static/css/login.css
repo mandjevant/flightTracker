@@ -50,6 +50,11 @@ body {
 }
 
 /* ANIMATIONS */
+.x0 {
+    -webkit-animation: animateCloud 13s linear infinite;
+	-moz-animation: animateCloud 13s linear infinite;
+	animation: animateCloud 13s linear infinite;
+}
 
 .x1 {
 	-webkit-animation: animateCloud 35s linear infinite;
@@ -102,6 +107,17 @@ body {
 }
 
 /* OBJECTS */
+.plane {
+    background-image: url('https://www.dl.dropboxusercontent.com/s/5beukq1zg37jlr7/airbus.png');
+    background-repeat: no-repeat;
+    width: 300px;
+    height: 120px;
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    -ms-filter: "FlipH";
+}
 
 .cloud {
 	background: #fff;

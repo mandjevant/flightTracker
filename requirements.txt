@@ -6,3 +6,6 @@ six
 setuptools~=47.3.1
 WTForms~=2.3.3
 Werkzeug~=1.0.1
+flask_login
+flask_wtf
+flask_sqlalchemy

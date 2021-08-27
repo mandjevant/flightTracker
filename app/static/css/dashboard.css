@@ -1,5 +1,11 @@
+body {
+    flex-direction: column;
+}
+
 .container {
-    margin-top: 15%;
+    margin-top: 4%;
+    margin-right: auto;
+    margin-left: auto;
     background-color: #141d26;
     box-shadow: 0 2px 5px rgba(0,0,0,.25), 0 0 16px rgba(0,0,0,.22);
     border-radius: 35px;
@@ -24,6 +30,8 @@
 }
 
 table {
+    margin-left: auto;
+    margin-right: auto;
     border-collapse: collapse;
     font-size: medium;
     display: flex;

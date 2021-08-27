@@ -14,17 +14,17 @@
 
 {% block content %}
 <div class="container">
-<h1>Welcome to your dashboard</h1>
+<h1>Flights Dashboard</h1>
 
-{% if top_destinations %}
+{% if top_ten_most_visited_destinations %}
     <div class="sub-container">
-        <h3>Top destinations</h3>
-        <table class="top_destinations">
+        <h3>Top ten most visited destinations</h3>
+        <table class="top_ten_most_visited_destinations">
             <tr class="col_names">
                 <th>Destination</th>
                 <th>Visits</th>
             </tr>
-            {% for row in top_destinations %}
+            {% for row in top_ten_most_visited_destinations %}
                 <tr class="col_values">
                     <td>{{ row["flight_to"] }}</td>
                     <td>{{ row["visits"] }}</td>
@@ -50,6 +50,69 @@
             {% endfor %}
         </table>
     </div>
+{% endif %}
+
+{% if coming_flights %}
+    <div class="sub-container">
+        <h3>Upcoming flights</h3>
+        <table class="coming_flights">
+            <tr class="col_names">
+                <th>Destination</th>
+                <th>Date</th>
+                <th>Flight number</th>
+            </tr>
+            {% for row in coming_flights %}
+                <tr class="col_values">
+                    <td>{{ row["flight_to"] }}</td>
+                    <td>{{ row["date"] }}</td>
+                    <td>{{ row["flight_number"] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endif %}
+
+</div>
+
+{% if current_user.is_admin() %}
+<div class="container">
+<h1>User Dashboard</h1>
+
+{% if normal_users %}
+    <div class="sub-container">
+        <h3>Viewers</h3>
+        <table class="normal_users">
+            <tr class="col_names">
+                <th>ID</th>
+                <th>Username</th>
+            </tr>
+            {% for row in normal_users %}
+                <tr class="col_values">
+                    <td>{{ row["id"] }}</td>
+                    <td>{{ row["username"] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endif %}
+
+{% if admin_users %}
+    <div class="sub-container">
+        <h3>Admins</h3>
+        <table class="admin_users">
+            <tr class="col_names">
+                <th>ID</th>
+                <th>Username</th>
+            </tr>
+            {% for row in admin_users %}
+                <tr class="col_values">
+                    <td>{{ row["id"] }}</td>
+                    <td>{{ row["username"] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endif %}
 {% endif %}
 
 </div>

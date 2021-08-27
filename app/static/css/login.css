@@ -22,6 +22,7 @@ body {
     0% {
         margin-left: -1000px;
     }
+
     100% {
         margin-left: 100%;
     }
@@ -31,6 +32,7 @@ body {
     0% {
         margin-left: -1000px;
     }
+
     100% {
         margin-left: 100%;
     }
@@ -40,6 +42,7 @@ body {
     0% {
         margin-left: -1000px;
     }
+
     100% {
         margin-left: 100%;
     }
@@ -55,7 +58,6 @@ body {
 	-webkit-animation: animateObject 35s linear infinite;
 	-moz-animation: animateObject 35s linear infinite;
 	animation: animateObject 35s linear infinite;
-
 	-webkit-transform: scale(0.85);
 	-moz-transform: scale(0.85);
 	transform: scale(0.85);
@@ -65,7 +67,6 @@ body {
 	-webkit-animation: animateObject 20s linear infinite;
 	-moz-animation: animateObject 20s linear infinite;
 	animation: animateObject 20s linear infinite;
-
 	-webkit-transform: scale(0.5);
 	-moz-transform: scale(0.5);
 	transform: scale(0.5);
@@ -75,7 +76,6 @@ body {
 	-webkit-animation: animateObject 30s linear infinite;
 	-moz-animation: animateObject 30s linear infinite;
 	animation: animateObject 30s linear infinite;
-
 	-webkit-transform: scale(0.7);
 	-moz-transform: scale(0.7);
 	transform: scale(0.7);
@@ -85,7 +85,6 @@ body {
 	-webkit-animation: animateObject 18s linear infinite;
 	-moz-animation: animateObject 18s linear infinite;
 	animation: animateObject 18s linear infinite;
-
 	-webkit-transform: scale(0.6);
 	-moz-transform: scale(0.6);
 	transform: scale(0.6);
@@ -95,7 +94,6 @@ body {
 	-webkit-animation: animateObject 25s linear infinite;
 	-moz-animation: animateObject 25s linear infinite;
 	animation: animateObject 25s linear infinite;
-
 	-webkit-transform: scale(0.75);
 	-moz-transform: scale(0.75);
 	transform: scale(0.75);
@@ -133,13 +131,23 @@ body {
     height: 143px;
 }
 
-.plane:after, .cloud_1:after, .cloud_2:after, .cloud_3:after, .plane:before, .cloud_1:before, .cloud_2:before, .cloud_3:before  {
+.plane:after,
+.cloud_1:after,
+.cloud_2:after,
+.cloud_3:after,
+.plane:before,
+.cloud_1:before,
+.cloud_2:before,
+.cloud_3:before {
 	content: '';
     position: absolute;
     z-index: -1;
 }
 
-.plane:after, .cloud_1:after, .cloud_2:after, .cloud_3:after {
+.plane:after,
+.cloud_1:after,
+.cloud_2:after,
+.cloud_3:after {
     -webkit-border-radius: 100px;
 	-moz-border-radius: 100px;
 	border-radius: 100px;
@@ -150,7 +158,10 @@ body {
 	width: 100px;
 }
 
-.plane:before, .cloud_1:before, .cloud_2:before, .cloud_3:before{
+.plane:before,
+.cloud_1:before,
+.cloud_2:before,
+.cloud_3:before {
     -webkit-border-radius: 200px;
 	-moz-border-radius: 200px;
 	border-radius: 200px;
@@ -214,7 +225,8 @@ input[type=submit]:active {
     border-color: #2a3c4f;
 }
 
-input[type=text], input[type=password] {
+input[type=text],
+input[type=password] {
     padding: 2px 3px;
     display: inline-block;
     border: 1px solid #ccc;
@@ -236,7 +248,8 @@ input[type=text], input[type=password] {
     color: white;
 }
 
-label[for=username], label[for=password] {
+label[for=username],
+label[for=password] {
     padding: 5px;
     margin-top: 8px;
     align-self: center;

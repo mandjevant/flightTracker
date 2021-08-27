@@ -158,7 +158,7 @@ def add_flight():
         aircraft = add_flight_form.aircraft.data
 
         db.session.add(Flight(flight_number=number,
-                              airline=courier,
+                              airline=courier.upper(),
                               date=date,
                               flight_from=departure_airport,
                               flight_to=arrival_airport,

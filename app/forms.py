@@ -57,20 +57,49 @@ class addFlightForm(FlaskForm):
     callSign = StringField(label="Call sign",
                            validators=[DataRequired()],
                            description="Add a flight",
-                           default="Call sign...")
+                           default="Call sign...",
+                           render_kw={"onfocus": "this.value=''"})
     date = DateField(label="Date of flight",
                      validators=[DataRequired()],
                      description="Enter date of flight",
                      default=datetime.date.today,
                      format="%Y-%m-%d")
+    flightFrom = StringField(label="From airport",
+                             description="Enter departure airport",
+                             default="Birmingham",
+                             render_kw={"onfocus": "this.value=''"})
+    flightTo = StringField(label="Destination airport",
+                           description="Enter arrival airport",
+                           default="Destination...",
+                           render_kw={"onfocus": "this.value=''"})
+    aircraft = StringField(label="Aircraft",
+                           description="Type of aircraft",
+                           default="Boeing 737-800")
     submit = SubmitField("Add flight")
 
 
-class editFlightForm(FlaskForm):
-    callSign = StringField("Call sign",
+class searchFlightForm(FlaskForm):
+    callSign = StringField(label="Call sign",
                            validators=[DataRequired()],
-                           description="Edit a flight",
-                           default="Call sign...")
+                           description="Add a flight",
+                           default="Call sign...",
+                           render_kw={"onfocus": "this.value=''"})
+    date = DateField(label="Date of flight",
+                     validators=[DataRequired()],
+                     description="Enter date of flight",
+                     default=datetime.date.today,
+                     format="%Y-%m-%d")
+    submit = SubmitField("Search flight")
+
+
+class editFlightForm(FlaskForm):
+    flightFrom = StringField(label="From airport",
+                             description="Enter departure airport")
+    flightTo = StringField(label="Destination airport",
+                           description="Enter arrival airport")
+    aircraft = StringField(label="Aircraft",
+                           description="Type of aircraft",
+                           default="Boeing 737-800")
     submit = SubmitField("Edit flight")
 
 
@@ -78,7 +107,8 @@ class removeFlightForm(FlaskForm):
     callSign = StringField("Call sign",
                            validators=[DataRequired()],
                            description="Remove a flight",
-                           default="Call sign...")
+                           default="Call sign...",
+                           render_kw={"onfocus": "this.value=''"})
     date = DateField(label="Date of flight",
                      validators=[DataRequired()],
                      description="Enter date of flight",
@@ -93,7 +123,8 @@ class addUserForm(FlaskForm):
                                        ValidateUsername(message="User already exists. "
                                                                 "Please use a different username.")],
                            description="New Username",
-                           default="Username")
+                           default="Username",
+                           render_kw={"onfocus": "this.value=''"})
     is_admin = BooleanField("Admin",
                             default=False)
     submit = SubmitField("Add user")
@@ -103,7 +134,8 @@ class upgradeUserForm(FlaskForm):
     username = StringField("Username",
                            validators=[DataRequired(), ValidateUsername(), ValidateAdmin()],
                            description="Username",
-                           default="Username")
+                           default="Username",
+                           render_kw={"onfocus": "this.value=''"})
     submit = SubmitField("Upgrade user")
 
 
@@ -112,7 +144,8 @@ class downgradeUserForm(FlaskForm):
                            validators=[DataRequired(), ValidateUsername(),
                                        ValidateAdmin(is_admin=False, message="User is not an admin.")],
                            description="Username",
-                           default="Username")
+                           default="Username",
+                           render_kw={"onfocus": "this.value=''"})
     submit = SubmitField("Downgrade user")
 
 
@@ -120,7 +153,8 @@ class removeUserForm(FlaskForm):
     username = StringField("Username",
                            validators=[DataRequired(), ValidateUsername()],
                            description="Remove Username",
-                           default="Username")
+                           default="Username",
+                           render_kw={"onfocus": "this.value=''"})
     submit = SubmitField("Remove user")
 
 

@@ -1,0 +1,25 @@
+a.return {
+    display: inline-block;
+    color: aliceblue;
+    font-size: 18px;
+    text-decoration: None;
+    border-radius: 10px;
+    width: inherit;
+    padding: 12px;
+    background-color: #456281;
+    border-color: #456281;
+    box-shadow: 0 2px 8px -4px rgba(90, 90, 90, 0.21);
+}
+
+details > summary:hover {
+    background-color: #242e38 !important;
+}
+
+details[open] > summary {
+    background-color: #242e38 !important;
+}
+
+.flashes {
+    margin: 45% !important;
+    width: max-content;
+}

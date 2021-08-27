@@ -1,10 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block description %}
+<meta name="description" content="Search results for database entries">
+{% endblock %}
+
+{% block imports %}
+<link rel="stylesheet" href="../static/css/result.css">
+<link rel="stylesheet" href="../static/css/dashboard.css">
+<link rel="stylesheet" href="../static/css/input.css">
+{% endblock %}
+
+{% block title %}
+<title>Results</title>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Search results</h1>
+
+    {% if flight %}
+    <div class="sub-container">
+        <h3>{{ flight["airline"] + flight["flight_number"] + ' | ' + flight["date"]|string }}</h3>
+        <table class="coming_flights">
+            <tr class="col_names">
+                <th>Id</th>
+                <th>Flight number</th>
+                <th>Flight from</th>
+                <th>Flight to</th>
+                <th>Airline</th>
+                <th>Aircraft</th>
+                <th>Flight time</th>
+                <th>Date</th>
+                <th>Scheduled time departure</th>
+                <th>Actual time departure</th>
+                <th>Scheduled time arrival</th>
+                <th>Actual time arrival</th>
+            </tr>
+            <tr class="col_values">
+                <td>{{ flight["id"] }}</td>
+                <td>{{ flight["flight_number"] }}</td>
+                <td>{{ flight["flight_from"] }}</td>
+                <td>{{ flight["flight_to"] }}</td>
+                <td>{{ flight["airline"] }}</td>
+                <td>{{ flight["aircraft"] }}</td>
+                <td>{{ flight["flight_time"] }}</td>
+                <td>{{ flight["date"] }}</td>
+                <td>{{ flight["scheduled_time_departure"] }}</td>
+                <td>{{ flight["actual_time_departure"] }}</td>
+                <td>{{ flight["scheduled_time_departure"] }}</td>
+                <td>{{ flight["actual_time_departure"] }}</td>
+            </tr>
+        </table>
+        <details>
+            <summary>Edit Flight</summary>
+            <div class="dropped">
+                <p>Edit the flight.</p>
+                <form method="POST" action="{{ url_for('edit_flight', flight_id=flight_id) }}">
+                    {{ edit_flight_form.csrf_token }}
+                    {{ edit_flight_form.flightFrom }}
+                    {{ edit_flight_form.flightTo }}
+                    {{ edit_flight_form.aircraft }}
+                    {{ edit_flight_form.submit }}
+                </form>
+            </div>
+        </details>
+    </div>
+    {% endif %}
+
+    <p><a class="return" href="{{ url_for('dashboard') }}">Return to the dashboard</a></p>
+</div>
+{% endblock %}

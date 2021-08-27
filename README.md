@@ -15,7 +15,7 @@
 <p align="center">
     <a href="https://gitHub.com/mandjevant/flightTracker/issues/" alt="GitHub issues" ><img src="https://img.shields.io/github/issues/mandjevant/flightTracker.svg" /></a>
 	<a href="https://gitHub.com/mandjevant/flightTracker/pull/" alt="GitHub pull-requests" ><img src="https://img.shields.io/github/issues-pr/mandjevant/flightTracker.svg" /></a>
-	<a href="http://perso.crans.org/besson/LICENSE.html" alt="GPLv3 license" ><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" /></a>
+	<a href="http://perso.crans.org/besson/LICENSE.html" alt="GPLv3 license" ><img src="https://img.shields.io/badge/License-AGPLv3-blue.svg" /></a>
 </p>
 
 <p align="center">

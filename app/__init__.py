@@ -1,5 +1,4 @@
 from flask import Flask
-from opensky_api import OpenSkyApi
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 import configparser
@@ -38,10 +37,5 @@ db = SQLAlchemy(app=app)
 login = LoginManager(app=app)
 login.login_view = "login"
 app.secret_key = Config.conf.get('CONSTANTS', 'SECRET_KEY')
-openskyAPI = OpenSkyApi(username=Config.conf.get('OPENSKY', 'USERNAME'),
-                        password=Config.conf.get('OPENSKY', 'PASSWORD'))
-
-flightStatsAppID = Config.conf.get('FLIGHTSTATS', 'APP_ID')
-flightStatsAppKey = Config.conf.get('FLIGHTSTATS', 'APP_KEY')
 
 from app import routes, models, errors

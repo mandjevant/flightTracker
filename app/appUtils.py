@@ -1,33 +1,8 @@
-from flask import jsonify
-from opensky_api import StateVector
 from app.models import Flight
 from datetime import datetime, timedelta
 import typing
 import string
 import random
-
-
-def jsonify_vector(vector: StateVector):
-    return jsonify(
-        {'baro_altitude': vector.baro_altitude,
-         'callsign': vector.callsign,
-         'geo_altitude': vector.geo_altitude,
-         'heading': vector.heading,
-         'icao24': vector.icao24,
-         'last_contact': vector.last_contact,
-         'latitude': vector.latitude,
-         'longitude': vector.longitude,
-         'on_ground': vector.on_ground,
-         'origin_country': vector.origin_country,
-         'position_source': vector.position_source,
-         'sensors': vector.sensors,
-         'spi': vector.spi,
-         'squawk': vector.squawk,
-         'time_position': vector.time_position,
-         'velocity': vector.velocity,
-         'vertical_rate': vector.vertical_rate
-         }
-    )
 
 
 def flight_number_parser(call_sign: str) -> (str, int):
@@ -69,10 +44,6 @@ def flight_retrieval(flight_request: dict, flight_int: typing.Optional[int] = 0)
                   date=date,
                   scheduled_time_departure=scheduled_time_departure,
                   scheduled_time_arrival=scheduled_time_arrival)
-
-
-def flights_exist(response: dict) -> bool:
-    return len(response["flights"]) > 0
 
 
 def generate_random_password(password_length: int = 8) -> str:

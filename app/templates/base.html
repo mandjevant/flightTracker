@@ -35,18 +35,18 @@
         {% if not current_user.is_anonymous %}
         <ul class="menu-main-nav">
             <li>
-                <a href="dashboard" title="Dashboard" class="nav-link">Dashboard</a>
+                <a href="{{ url_for('dashboard') }}" title="Dashboard" class="nav-link">Dashboard</a>
             </li>
             {% if current_user.is_admin() %}
             <li>
-                <a href="input" title="Input" class="nav-link">Input</a>
+                <a href="{{ url_for('input_forms') }}" title="Input" class="nav-link">Input</a>
             </li>
             {% endif %}
             <li>
-                <a href="openskytest" title="OpenSkyTest" class="nav-link">OpenSkyTest</a>
+                <a href="{{ url_for('test') }}" title="test" class="nav-link">test</a>
             </li>
             <li>
-                <a href="profile" title="Profile" class="nav-link">Profile</a>
+                <a href="{{ url_for('profile') }}" title="Profile" class="nav-link">Profile</a>
             </li>
             <li>
                 <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>

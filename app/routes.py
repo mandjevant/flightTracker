@@ -1,3 +1,5 @@
+import typing
+
 from flask import render_template, flash, redirect, url_for, abort
 from app import app, db
 from app.models import User, Flight
@@ -11,6 +13,14 @@ from sqlalchemy import func, desc
 
 def admin_check() -> bool:
     return current_user.is_admin()
+
+
+def find_flight(call_sign, date) -> typing.Optional[int]:
+    courier, number = flight_number_parser(call_sign)
+    flight_exists = db.session.query(Flight.id).filter_by(flight_number=number,
+                                                          airline=courier.upper(),
+                                                          date=date).scalar()
+    return flight_exists
 
 
 def admin_required(function):
@@ -112,15 +122,6 @@ def logout():
     return redirect(url_for("login"))
 
 
-@app.route("/test", methods=["GET"])
-@login_required
-def test():
-    from sqlalchemy import inspect, MetaData
-    tables = inspect(db.engine).get_table_names()
-
-    return {"Tables": tables}
-
-
 @app.route("/input", methods=["GET"])
 @login_required
 @admin_required
@@ -176,10 +177,7 @@ def search_flight():
     search_flight_form = searchFlightForm()
 
     if search_flight_form.validate_on_submit():
-        courier, number = flight_number_parser(search_flight_form.callSign.data)
-        flight_exists = db.session.query(Flight.id).filter_by(flight_number=number,
-                                                              airline=courier.upper(),
-                                                              date=search_flight_form.date.data).scalar()
+        flight_exists = find_flight(search_flight_form.callSign.data, search_flight_form.date.data)
 
         if flight_exists is None:
             flash("Could not find flight.")
@@ -232,15 +230,13 @@ def remove_flight():
     remove_flight_form = removeFlightForm()
 
     if remove_flight_form.validate_on_submit():
-        courier, number = flight_number_parser(remove_flight_form.callSign.data)
-        flight_exists = db.session.query(Flight.id).filter_by(flight_number=number,
-                                                              airline=courier.upper(),
-                                                              date=remove_flight_form.date.data).scalar()
+        flight_exists = find_flight(remove_flight_form.callSign.data, remove_flight_form.date.data)
 
         if flight_exists is None:
             flash("Could not find flight.")
             return redirect(url_for("input_forms"))
 
+        courier, number = flight_number_parser(remove_flight_form.callSign.data)
         Flight.query.filter(Flight.id == flight_exists, Flight.flight_number == number,
                             Flight.airline == courier.upper(), Flight.date == remove_flight_form.date.data).delete()
 

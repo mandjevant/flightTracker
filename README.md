@@ -13,6 +13,7 @@
 </p>
 
 <p align="center">
+    <a href="https://www.codacy.com/gh/mandjevant/flightTracker/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mandjevant/flightTracker&amp;utm_campaign=Badge_Grade" alt="Codacy Badge" ><img src="https://app.codacy.com/project/badge/Grade/8459d94a76294c16a118b24401fec238" /></a>
     <a href="https://gitHub.com/mandjevant/flightTracker/issues/" alt="GitHub issues" ><img src="https://img.shields.io/github/issues/mandjevant/flightTracker.svg" /></a>
 	<a href="https://gitHub.com/mandjevant/flightTracker/pull/" alt="GitHub pull-requests" ><img src="https://img.shields.io/github/issues-pr/mandjevant/flightTracker.svg" /></a>
 	<a href="http://perso.crans.org/besson/LICENSE.html" alt="GPLv3 license" ><img src="https://img.shields.io/badge/License-AGPLv3-blue.svg" /></a>

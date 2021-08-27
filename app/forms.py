@@ -37,18 +37,22 @@ class ValidateAdmin(object):
 
     def __call__(self, form, field):
         user = User.query.filter_by(username=field.data).first()
+        if user is None:
+            return
+
         if user.is_admin() == self.is_admin:
             flash(self.message)
             raise ValidationError(self.message)
 
 
 class ValidateUsername(object):
-    def __init__(self, message: str = "User does not exist"):
+    def __init__(self, message: str = "User does not exist", new_user: bool = False):
         self.message = message
+        self.new_user = new_user
 
     def __call__(self, form, field):
         user = User.query.filter_by(username=field.data).first()
-        if user is None:
+        if (self.new_user and user is not None) or (not self.new_user and user is None):
             flash(self.message)
             raise ValidationError(self.message)
 
@@ -121,7 +125,8 @@ class addUserForm(FlaskForm):
     username = StringField("Username",
                            validators=[DataRequired(),
                                        ValidateUsername(message="User already exists. "
-                                                                "Please use a different username.")],
+                                                                "Please use a different username.",
+                                                        new_user=True)],
                            description="New Username",
                            default="Username",
                            render_kw={"onfocus": "this.value=''"})

@@ -1,26 +1,26 @@
 from flask import render_template, flash, redirect, url_for, abort
-from app import app, db, openskyAPI
+from app import app, db
 from app.models import User, Flight
 from app.forms import addFlightForm, editFlightForm, removeFlightForm, addUserForm, upgradeUserForm, \
-    downgradeUserForm, removeUserForm, loginForm, changePasswordForm
-from app.appUtils import jsonify_vector, flight_number_parser, flights_exist, flight_retrieval, generate_random_password
-from app.flightstatsWrapper import flightStatsApi
+    searchFlightForm, downgradeUserForm, removeUserForm, loginForm, changePasswordForm
+from app.appUtils import flight_number_parser, generate_random_password
 from flask_login import current_user, login_user, logout_user, login_required
 from functools import wraps
+from sqlalchemy import func, desc
 
 
 def admin_check() -> bool:
     return current_user.is_admin()
 
 
-def admin_required(func):
-    @wraps(func)
+def admin_required(function):
+    @wraps(function)
     def admin_check_wrapper(*args, **kwargs):
         if not admin_check():
             flash("You do not have permission to view that page.")
             abort(404)
 
-        return func(*args, **kwargs)
+        return function(*args, **kwargs)
 
     return admin_check_wrapper
 
@@ -59,21 +59,28 @@ def change_password():
 @app.route("/dashboard", methods=["GET"])
 @login_required
 def dashboard():
-    top_destinations = db.session.execute("SELECT flight_to, \
-                                                  COUNT(flight_to) as visits \
-                                           FROM Flight \
-                                           GROUP BY flight_to \
-                                           ORDER BY visits DESC \
-                                           LIMIT 10")
+    top_ten_most_visited_destinations = \
+        db.session.query(Flight.flight_to,
+                         func.count(Flight.flight_to).label("visits")
+                         ).group_by(Flight.flight_to).order_by(desc("visits")).limit(10).all()
 
-    alter_top_destinations = db.session.execute("SELECT flight_to, \
-                                                        COUNT(flight_to) as visits \
-                                                 FROM Flight \
-                                                 GROUP BY flight_to \
-                                                 ORDER BY visits ASC \
-                                                 LIMIT 10")
+    alter_top_destinations = \
+        db.session.query(Flight.flight_to,
+                         func.count(Flight.flight_to).label("visits")
+                         ).group_by(Flight.flight_to).order_by("visits").limit(10).all()
 
-    return render_template("dashboard.html", top_destinations=top_destinations, alter_top_destinations=alter_top_destinations)
+    coming_flights = db.session.query(Flight.flight_to, Flight.date, Flight.flight_number).order_by(Flight.date).limit(
+        20).all()
+
+    normal_users = User.query.filter_by(role="viewer").order_by(User.username).all()
+    admin_users = User.query.filter_by(role="admin").order_by(User.username).all()
+
+    return render_template("dashboard.html",
+                           top_ten_most_visited_destinations=top_ten_most_visited_destinations,
+                           alter_top_destinations=alter_top_destinations,
+                           coming_flights=coming_flights,
+                           normal_users=normal_users,
+                           admin_users=admin_users)
 
 
 @app.route("/", methods=["GET"])
@@ -105,12 +112,13 @@ def logout():
     return redirect(url_for("login"))
 
 
-@app.route("/openskytest", methods=["GET"])
+@app.route("/test", methods=["GET"])
 @login_required
-def opensky_test():
-    states = openskyAPI.get_states()
+def test():
+    from sqlalchemy import inspect, MetaData
+    tables = inspect(db.engine).get_table_names()
 
-    return jsonify_vector(states.states[0])
+    return {"Tables": tables}
 
 
 @app.route("/input", methods=["GET"])
@@ -118,7 +126,7 @@ def opensky_test():
 @admin_required
 def input_forms():
     add_flight_form = addFlightForm()
-    edit_flight_form = editFlightForm()
+    search_flight_form = searchFlightForm()
     remove_flight_form = removeFlightForm()
     add_user_form = addUserForm()
     upgrade_user_form = upgradeUserForm()
@@ -127,7 +135,7 @@ def input_forms():
 
     return render_template("input.html",
                            add_flight_form=add_flight_form,
-                           edit_flight_form=edit_flight_form,
+                           search_flight_form=search_flight_form,
                            remove_flight_form=remove_flight_form,
                            add_user_form=add_user_form,
                            upgrade_user_form=upgrade_user_form,
@@ -144,17 +152,16 @@ def add_flight():
     if add_flight_form.validate_on_submit():
         courier, number = flight_number_parser(add_flight_form.callSign.data)
         date = add_flight_form.date.data
+        departure_airport = add_flight_form.flightFrom.data
+        arrival_airport = add_flight_form.flightTo.data
+        aircraft = add_flight_form.aircraft.data
 
-        req = flightStatsApi("https://api.flightstats.com/flex/flightFeatures")
-        req.flight(courier, number, date.year, date.month, date.day)
-        req.add_app_credentials()
-        r = req.get()
-
-        if not flights_exist(r.json()):
-            flash("No flight found")
-            return redirect(url_for("input_forms"))
-
-        db.session.add(flight_retrieval(r.json()))
+        db.session.add(Flight(flight_number=number,
+                              airline=courier,
+                              date=date,
+                              flight_from=departure_airport,
+                              flight_to=arrival_airport,
+                              aircraft=aircraft))
         db.session.commit()
 
         flash("Flight added.")
@@ -162,33 +169,80 @@ def add_flight():
     return redirect(url_for("input_forms"))
 
 
-@app.route("/edit_flight_form", methods=["POST"])
+@app.route("/search_flight_form", methods=["GET", "POST"])
 @login_required
 @admin_required
-def edit_flight():
-    edit_flight_form = editFlightForm()
+def search_flight():
+    search_flight_form = searchFlightForm()
 
-    if edit_flight_form.validate_on_submit():
-        flash("Editing!")
+    if search_flight_form.validate_on_submit():
+        courier, number = flight_number_parser(search_flight_form.callSign.data)
+        flight_exists = db.session.query(Flight.id).filter_by(flight_number=number,
+                                                              airline=courier.upper(),
+                                                              date=search_flight_form.date.data).scalar()
+
+        if flight_exists is None:
+            flash("Could not find flight.")
+            return redirect(url_for("input_forms"))
+
+        return redirect(url_for("show_flight", flight_id=flight_exists))
 
     return redirect(url_for("input_forms"))
 
 
-@app.route("/remove_flight_form", methods=["POST"])
+@app.route("/show_flight/<int:flight_id>", methods=["GET", "POST"])
+@login_required
+@admin_required
+def show_flight(flight_id: int):
+    flight = Flight.query.filter_by(id=flight_id).first()
+    edit_flight_form = editFlightForm()
+
+    edit_flight_form.flightTo.data = flight.flight_to if flight.flight_to not in ["", None] else "Departure airport"
+    edit_flight_form.flightFrom.data = flight.flight_from if flight.flight_from not in ["", None] \
+        else "Arrival airport"
+    edit_flight_form.aircraft.data = flight.aircraft if flight.aircraft not in ["", None] else "Boeing 737-800"
+
+    return render_template("result.html", flight_id=flight_id, edit_flight_form=edit_flight_form, flight=flight)
+
+
+@app.route("/edit_flight_form/<int:flight_id>", methods=["GET", "POST"])
+@login_required
+@admin_required
+def edit_flight(flight_id: int):
+    flight = Flight.query.filter_by(id=flight_id).first()
+
+    edit_flight_form = editFlightForm()
+
+    if edit_flight_form.validate_on_submit():
+        flight.flight_to = edit_flight_form.flightTo.data
+        flight.flight_from = edit_flight_form.flightFrom.data
+        flight.aircraft = edit_flight_form.aircraft.data
+        db.session.add(flight)
+        db.session.commit()
+
+        flash("Flight edited!")
+
+    return redirect(url_for("show_flight", flight_id=flight_id))
+
+
+@app.route("/remove_flight_form", methods=["GET", "POST"])
 @login_required
 @admin_required
 def remove_flight():
     remove_flight_form = removeFlightForm()
 
     if remove_flight_form.validate_on_submit():
-        flight_exists = db.session.query(Flight.id).filter_by(flight_number=remove_flight_form.callSign.data,
+        courier, number = flight_number_parser(remove_flight_form.callSign.data)
+        flight_exists = db.session.query(Flight.id).filter_by(flight_number=number,
+                                                              airline=courier.upper(),
                                                               date=remove_flight_form.date.data).scalar()
+
         if flight_exists is None:
             flash("Could not find flight.")
             return redirect(url_for("input_forms"))
 
-        Flight.query.filter(Flight.id == flight_exists, Flight.flight_number == remove_flight_form.callSign.data,
-                            Flight.date == remove_flight_form.date.data).delete()
+        Flight.query.filter(Flight.id == flight_exists, Flight.flight_number == number,
+                            Flight.airline == courier.upper(), Flight.date == remove_flight_form.date.data).delete()
 
         db.session.commit()
 

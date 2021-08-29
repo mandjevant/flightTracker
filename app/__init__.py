@@ -7,10 +7,19 @@ import os
 
 
 class Config:
+    """
+    Class for importing sensitive configuration variables
+     from conf.ini
+    """
     conf = None
 
     @staticmethod
     def initiate_config() -> bool:
+        """
+        Initiate configparser
+         check if conf.ini can be found and read
+        :return: conf.ini was found | bool
+        """
         try:
             Config.conf = configparser.ConfigParser()
             if os.path.exists(os.getcwd() + '\\conf.ini'):

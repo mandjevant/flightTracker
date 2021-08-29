@@ -1,3 +1,7 @@
+from flask_login import current_user
+from app import db
+from app.models import Flight
+import typing
 import string
 import random
 
@@ -21,3 +25,25 @@ def generate_random_password(password_length: int = 8) -> str:
     :return: Random password | str
     """
     return "".join(random.choices(string.ascii_letters + string.digits, k=password_length))
+
+
+def admin_check() -> bool:
+    """
+    Check if current user is admin
+    :return: if current user has admin role | bool
+    """
+    return current_user.is_admin()
+
+
+def find_flight(call_sign, date) -> typing.Optional[int]:
+    """
+    Find a flight in the database
+    :param call_sign: flight call sign
+    :param date: date of flight
+    :return: the flight id or None
+    """
+    courier, number = flight_number_parser(call_sign)
+    flight_exists = db.session.query(Flight.id).filter_by(flight_number=number,
+                                                          airline=courier.upper(),
+                                                          date=date).scalar()
+    return flight_exists

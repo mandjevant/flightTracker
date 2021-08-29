@@ -1,26 +1,12 @@
-import typing
-
 from flask import render_template, flash, redirect, url_for, abort
 from app import app, db
 from app.models import User, Flight
 from app.forms import addFlightForm, editFlightForm, removeFlightForm, addUserForm, upgradeUserForm, \
     searchFlightForm, downgradeUserForm, removeUserForm, loginForm, changePasswordForm
-from app.appUtils import flight_number_parser, generate_random_password
+from app.appUtils import flight_number_parser, generate_random_password, admin_check, find_flight
 from flask_login import current_user, login_user, logout_user, login_required
 from functools import wraps
 from sqlalchemy import func, desc
-
-
-def admin_check() -> bool:
-    return current_user.is_admin()
-
-
-def find_flight(call_sign, date) -> typing.Optional[int]:
-    courier, number = flight_number_parser(call_sign)
-    flight_exists = db.session.query(Flight.id).filter_by(flight_number=number,
-                                                          airline=courier.upper(),
-                                                          date=date).scalar()
-    return flight_exists
 
 
 def admin_required(function):

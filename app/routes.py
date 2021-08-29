@@ -10,8 +10,16 @@ from sqlalchemy import func, desc
 
 
 def admin_required(function):
+    """
+    Custom decorator
+     for routes that require admin role
+    """
     @wraps(function)
     def admin_check_wrapper(*args, **kwargs):
+        """
+        Verify that user has admin role
+         if not, display 400 error page
+        """
         if not admin_check():
             flash("You do not have permission to view that page.")
             abort(404)
@@ -21,16 +29,13 @@ def admin_required(function):
     return admin_check_wrapper
 
 
-@app.route("/all_results_temp", methods=["GET"])
-@login_required
-def all_results_temp():
-    flights = Flight.query.all()
-    return str([flight.flight_number for flight in flights])
-
-
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
+    """
+    User profile route
+     including form for changing password
+    """
     change_password_form = changePasswordForm()
 
     return render_template("user.html", change_password_form=change_password_form)
@@ -39,6 +44,11 @@ def profile():
 @app.route("/change_password", methods=["POST"])
 @login_required
 def change_password():
+    """
+    Separate route for form handling
+     change password form
+     update database on validation and submit of form
+    """
     change_password_form = changePasswordForm()
 
     if change_password_form.validate_on_submit():
@@ -55,6 +65,10 @@ def change_password():
 @app.route("/dashboard", methods=["GET"])
 @login_required
 def dashboard():
+    """
+    Dashboard route
+     including data for tables
+    """
     top_ten_most_visited_destinations = \
         db.session.query(Flight.flight_to,
                          func.count(Flight.flight_to).label("visits")
@@ -82,6 +96,11 @@ def dashboard():
 @app.route("/", methods=["GET"])
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    """
+    Login route
+     including form for login form
+     log in the user
+    """
     if current_user.is_authenticated:
         return redirect(url_for("dashboard"))
 
@@ -103,6 +122,10 @@ def login():
 @app.route("/logout")
 @login_required
 def logout():
+    """
+    Logout route
+     for logging out the user
+    """
     logout_user()
 
     return redirect(url_for("login"))
@@ -112,6 +135,10 @@ def logout():
 @login_required
 @admin_required
 def input_forms():
+    """
+    Route for data input
+     including all forms
+    """
     add_flight_form = addFlightForm()
     search_flight_form = searchFlightForm()
     remove_flight_form = removeFlightForm()
@@ -134,6 +161,11 @@ def input_forms():
 @login_required
 @admin_required
 def add_flight():
+    """
+    Separate route for form handling
+     add flight form
+     update database on validation and submit of form
+    """
     add_flight_form = addFlightForm()
 
     if add_flight_form.validate_on_submit():
@@ -160,6 +192,12 @@ def add_flight():
 @login_required
 @admin_required
 def search_flight():
+    """
+    Separate route for form handling
+     search flight form
+     verify if flight exists
+     redirect to show flight page on validation and submit of form
+    """
     search_flight_form = searchFlightForm()
 
     if search_flight_form.validate_on_submit():
@@ -178,6 +216,12 @@ def search_flight():
 @login_required
 @admin_required
 def show_flight(flight_id: int):
+    """
+    Route for showing a flight
+     including edit flight form
+     set default dynamically
+    :param flight_id: flight id | int
+    """
     flight = Flight.query.filter_by(id=flight_id).first()
     edit_flight_form = editFlightForm()
 
@@ -193,6 +237,12 @@ def show_flight(flight_id: int):
 @login_required
 @admin_required
 def edit_flight(flight_id: int):
+    """
+    Separate route for form handling
+     edit flight form
+     update database on validation and submit of form
+    :param flight_id: flight id | int
+    """
     flight = Flight.query.filter_by(id=flight_id).first()
 
     edit_flight_form = editFlightForm()
@@ -213,6 +263,12 @@ def edit_flight(flight_id: int):
 @login_required
 @admin_required
 def remove_flight():
+    """
+    Separate route for form handling
+     remove flight form
+     verify if flight exists
+     update database on validation and submit of form
+    """
     remove_flight_form = removeFlightForm()
 
     if remove_flight_form.validate_on_submit():
@@ -237,6 +293,12 @@ def remove_flight():
 @login_required
 @admin_required
 def add_user():
+    """
+    Separate route for form handling
+     add user form
+     generate and display a random password
+     update database on validation and submit of form
+    """
     add_user_form = addUserForm()
 
     if add_user_form.validate_on_submit():
@@ -260,6 +322,11 @@ def add_user():
 @login_required
 @admin_required
 def upgrade_user():
+    """
+    Separate route for form handling
+     upgrade user form
+     update database on validation and submit of form
+    """
     upgrade_user_form = upgradeUserForm()
 
     if upgrade_user_form.validate_on_submit():
@@ -277,6 +344,11 @@ def upgrade_user():
 @login_required
 @admin_required
 def downgrade_user():
+    """
+    Separate route for form handling
+     downgrade user form
+     update database on validation and submit of form
+    """
     downgrade_user_form = downgradeUserForm()
 
     if downgrade_user_form.validate_on_submit():
@@ -294,6 +366,12 @@ def downgrade_user():
 @login_required
 @admin_required
 def remove_user():
+    """
+    Separate route for form handling
+     remove user form
+     verify if user exists
+     update database on validation and submit of form
+    """
     remove_user_form = removeUserForm()
 
     if remove_user_form.validate_on_submit():

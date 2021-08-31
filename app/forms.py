@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask import flash
 from flask_login import current_user
-from wtforms import StringField, SubmitField, DateField, PasswordField, BooleanField
+from wtforms import StringField, SubmitField, DateField, PasswordField, BooleanField, FloatField
 from wtforms.validators import DataRequired, ValidationError
 from app.models import User
 import datetime
@@ -13,6 +13,7 @@ class NotEqualTo(object):
      for changing password form
      new and old password must not be identical
     """
+
     def __init__(self, fieldname):
         """
         Initiate class variables
@@ -41,6 +42,7 @@ class ValidateOldPassword(object):
      for changing password form
      validating old password
     """
+
     def __call__(self, form, field):
         """
         Check if old password field matches the old password
@@ -58,6 +60,7 @@ class ValidateAdmin(object):
      user management
      verify if user is admin or not
     """
+
     def __init__(self, is_admin: bool = True, message: str = "User is already an admin."):
         """
         Initiate class variables
@@ -87,6 +90,7 @@ class ValidateUsername(object):
      user management
      validate username
     """
+
     def __init__(self, message: str = "User does not exist", new_user: bool = False):
         """
         Initiate class variables
@@ -263,3 +267,34 @@ class changePasswordForm(FlaskForm):
                                validators=[DataRequired(), NotEqualTo("current_password")],
                                description="New password")
     submit = SubmitField("Change password")
+
+
+class addAirportForm(FlaskForm):
+    """
+    FlaskForm for adding an airport
+    """
+    airport_name = StringField("Name",
+                               validators=[DataRequired()],
+                               description="Airport name",
+                               default="Airport name",
+                               render_kw={"onfocus": "this.value=''"})
+    airport_iata = StringField("Iata",
+                               validators=[DataRequired()],
+                               description="Airport iata",
+                               default="Airport iata",
+                               render_kw={"onfocus": "this.value=''"})
+    airport_city = StringField("City",
+                               description="Airport city",
+                               default="Airport city",
+                               render_kw={"onfocus": "this.value=''"})
+    airport_longitude = FloatField("Longitude",
+                                   validators=[DataRequired()],
+                                   description="Airport longitude",
+                                   default="Longitude",
+                                   render_kw={"onfocus": "this.value=''"})
+    airport_latitude = FloatField("Latitude",
+                                  validators=[DataRequired()],
+                                  description="Airport latitude",
+                                  default="Latitude",
+                                  render_kw={"onfocus": "this.value=''"})
+    submit = SubmitField("Add airport")

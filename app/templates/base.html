@@ -68,6 +68,9 @@
             </li>
             {% endif %}
             <li>
+                <a href="{{ url_for('interactive_map') }}" title="Map" class="nav-link">Map</a>
+            </li>
+            <li>
                 <a href="{{ url_for('profile') }}" title="Profile" class="nav-link">Profile</a>
             </li>
             <li>
@@ -87,5 +90,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="../static/js/smoothscroll.js"></script>
 <script src="../static/js/delete_flash.js"></script>
+{% block bottom_scripts %}{% endblock %}
 </body>
 </html>

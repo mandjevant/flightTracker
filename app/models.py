@@ -87,3 +87,23 @@ class Flight(db.Model):
         :return: string representation of flight class | str
         """
         return f"<FlightNumber {self.flight_number}>"
+
+
+class Airport(db.Model):
+    """
+    Airport database model
+    """
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+    iata = db.Column(db.VARCHAR)
+    city = db.Column(db.String)
+    longitude = db.Column(db.Float)
+    latitude = db.Column(db.Float)
+    images = db.Column(db.String, nullable=True)
+
+    def __repr__(self) -> str:
+        """
+        Represent airport class object as string
+        :return: string representation of airport class | str
+        """
+        return f"<AirportIATA> {self.iata}"

@@ -1,12 +1,13 @@
 from flask import render_template, flash, redirect, url_for, abort
 from app import app, db
-from app.models import User, Flight
+from app.models import User, Flight, Airport
 from app.forms import addFlightForm, editFlightForm, removeFlightForm, addUserForm, upgradeUserForm, \
-    searchFlightForm, downgradeUserForm, removeUserForm, loginForm, changePasswordForm
+    searchFlightForm, downgradeUserForm, removeUserForm, loginForm, changePasswordForm, addAirportForm
 from app.appUtils import flight_number_parser, generate_random_password, admin_check, find_flight
 from flask_login import current_user, login_user, logout_user, login_required
 from functools import wraps
 from sqlalchemy import func, desc
+import json
 
 
 def admin_required(function):
@@ -14,6 +15,7 @@ def admin_required(function):
     Custom decorator
      for routes that require admin role
     """
+
     @wraps(function)
     def admin_check_wrapper(*args, **kwargs):
         """
@@ -146,6 +148,7 @@ def input_forms():
     upgrade_user_form = upgradeUserForm()
     downgrade_user_form = downgradeUserForm()
     remove_user_form = removeUserForm()
+    add_airport_form = addAirportForm()
 
     return render_template("input.html",
                            add_flight_form=add_flight_form,
@@ -154,7 +157,8 @@ def input_forms():
                            add_user_form=add_user_form,
                            upgrade_user_form=upgrade_user_form,
                            downgrade_user_form=downgrade_user_form,
-                           remove_user_form=remove_user_form)
+                           remove_user_form=remove_user_form,
+                           add_airport_form=add_airport_form)
 
 
 @app.route("/add_flight_form", methods=["GET", "POST"])
@@ -388,3 +392,52 @@ def remove_user():
         flash("User removed.")
 
     return redirect(url_for("input_forms"))
+
+
+@app.route("/add_airport_form", methods=["GET", "POST"])
+@login_required
+@admin_required
+def add_airport():
+    """
+    Separate route for form handling
+     add airport form
+     update database on validation and submit of form
+    """
+    add_airport_form = addAirportForm()
+
+    if add_airport_form.validate_on_submit():
+        name = add_airport_form.airport_name.data
+        iata = add_airport_form.airport_iata.data
+        city = add_airport_form.airport_city.data
+        longitude = add_airport_form.airport_longitude.data
+        latitude = add_airport_form.airport_latitude.data
+
+        db.session.add(Airport(name=name,
+                               iata=iata,
+                               city=city,
+                               longitude=longitude,
+                               latitude=latitude))
+        db.session.commit()
+
+        flash("Airport added.")
+
+    return redirect(url_for("input_forms"))
+
+
+@app.route("/map", methods=["GET", "POST"])
+@login_required
+def interactive_map():
+    """
+    Interactive map route
+    """
+    airport_data = list()
+    airport_q = db.session.query(Airport.id,
+                                 Airport.name,
+                                 Airport.iata,
+                                 Airport.city,
+                                 Airport.longitude,
+                                 Airport.latitude).all()
+    for row in airport_q:
+        airport_data.append(row._asdict())
+
+    return render_template("map.html", airport_data=json.dumps({'airports': airport_data}))

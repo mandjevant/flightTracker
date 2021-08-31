@@ -63,7 +63,7 @@
 
     <div class="user_container">
         <div class="picture">
-            <img src="../static/images/Headcount.jpg" alt="Airplane">
+            <img src="../static/images/Headcount.jpg" alt="Headcount">
         </div>
         <div class="drop">
             <details>
@@ -111,6 +111,29 @@
                         {{ remove_user_form.csrf_token }}
                         {{ remove_user_form.username }}
                         {{ remove_user_form.submit }}
+                    </form>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="airport_container">
+        <div class="picture">
+            <img src="../static/images/Airport.jpg" alt="Airport">
+        </div>
+        <div class="drop">
+            <details>
+                <summary>Add Airport</summary>
+                <div class="dropped">
+                    <p>Add an airport.</p>
+                    <form method="POST" action="{{ url_for('add_airport') }}">
+                        {{ add_airport_form.csrf_token }}
+                        {{ add_airport_form.airport_name }}
+                        {{ add_airport_form.airport_iata }}
+                        {{ add_airport_form.airport_city }}
+                        {{ add_airport_form.airport_longitude }}
+                        {{ add_airport_form.airport_latitude }}
+                        {{ add_airport_form.submit }}
                     </form>
                 </div>
             </details>

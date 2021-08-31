@@ -1,5 +1,8 @@
 function addMarkerToGroup(group, lat, lng, html) {
-    let marker = new H.map.Marker({lat:lat, lng:lng});
+    let marker = new H.map.Marker({
+        lat: lat,
+        lng: lng
+    });
     marker.setData(html);
     group.addObject(marker);
 }
@@ -16,7 +19,7 @@ function addInfoBubble(map, lat, lng, name, iata) {
         ui.addBubble(bubble);
     }, false);
 
-    addMarkerToGroup(group, lat, lng, name + " (" + iata + ")")
+    addMarkerToGroup(group, lat, lng, name + " (" + iata + ")");
 }
 
 let platform = new H.service.Platform({
@@ -40,10 +43,10 @@ let ui = H.ui.UI.createDefault(map, defaultLayers);
 window.onload = function () {
     for (let i = 0; i < airport_data["airports"].length; i++) {
         addInfoBubble(map,
-            airport_data["airports"][parseInt(i)].latitude,
-            airport_data["airports"][parseInt(i)].longitude,
-            airport_data["airports"][parseInt(i)].name,
-            airport_data["airports"][parseInt(i)].iata
-        )
+            airport_data["airports"][parseInt(i, 10)].latitude,
+            airport_data["airports"][parseInt(i, 10)].longitude,
+            airport_data["airports"][parseInt(i, 10)].name,
+            airport_data["airports"][parseInt(i, 10)].iata
+        );
     }
 };

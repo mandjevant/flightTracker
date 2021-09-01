@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed
 from flask import flash
 from flask_login import current_user
 from wtforms import StringField, SubmitField, DateField, PasswordField, BooleanField, FloatField, MultipleFileField
@@ -338,7 +339,7 @@ class supplementAirportForm(FlaskForm):
     FlaskForm for supplementing an airport with images
     """
     pictures = MultipleFileField(label="Images",
-                                 validators=(["jpg", "png", "jpeg"]),
+                                 validators=([FileAllowed(["jpg", "png", "jpeg"], ".jpg, .png and .jpeg only!")]),
                                  description="Upload images",
                                  default="Add images...")
     submit = SubmitField("Add images")

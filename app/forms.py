@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask import flash
 from flask_login import current_user
-from wtforms import StringField, SubmitField, DateField, PasswordField, BooleanField, FloatField
+from wtforms import StringField, SubmitField, DateField, PasswordField, BooleanField, FloatField, MultipleFileField
 from wtforms.validators import DataRequired, ValidationError
 from app.models import User
 import datetime
@@ -206,8 +206,8 @@ class addUserForm(FlaskForm):
 
 class upgradeUserForm(FlaskForm):
     """
-        FlaskForm for upgrading a user
-        """
+    FlaskForm for upgrading a user
+    """
     username = StringField(label="Username",
                            validators=[DataRequired(), ValidateUsername(), ValidateAdmin()],
                            description="Username",
@@ -331,6 +331,17 @@ class editAirportForm(FlaskForm):
                                   validators=[DataRequired()],
                                   description="Airport latitude")
     submit = SubmitField("Edit airport")
+
+
+class supplementAirportForm(FlaskForm):
+    """
+    FlaskForm for supplementing an airport with images
+    """
+    pictures = MultipleFileField(label="Images",
+                                 validators=(["jpg", "png", "jpeg"]),
+                                 description="Upload images",
+                                 default="Add images...")
+    submit = SubmitField("Add images")
 
 
 class removeAirportForm(FlaskForm):

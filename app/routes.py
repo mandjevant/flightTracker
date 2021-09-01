@@ -1,13 +1,17 @@
-from flask import render_template, flash, redirect, url_for, abort
+from flask import render_template, flash, redirect, url_for, abort, request
 from app import app, db
 from app.models import User, Flight, Airport
 from app.forms import addFlightForm, editFlightForm, removeFlightForm, addUserForm, upgradeUserForm, \
-    searchFlightForm, downgradeUserForm, removeUserForm, loginForm, changePasswordForm, addAirportForm
-from app.appUtils import flight_number_parser, generate_random_password, admin_check, find_flight
+    searchFlightForm, downgradeUserForm, removeUserForm, loginForm, changePasswordForm, addAirportForm, \
+    searchAirportForm, editAirportForm, supplementAirportForm, removeAirportForm
+from app.appUtils import flight_number_parser, generate_random_password, admin_check, find_flight, find_airport, \
+    save_img
 from flask_login import current_user, login_user, logout_user, login_required
 from functools import wraps
 from sqlalchemy import func, desc
+from werkzeug.utils import secure_filename
 import json
+import os
 
 
 def admin_required(function):
@@ -149,6 +153,8 @@ def input_forms():
     downgrade_user_form = downgradeUserForm()
     remove_user_form = removeUserForm()
     add_airport_form = addAirportForm()
+    search_airport_form = searchAirportForm()
+    remove_airport_form = removeAirportForm()
 
     return render_template("input.html",
                            add_flight_form=add_flight_form,
@@ -158,7 +164,9 @@ def input_forms():
                            upgrade_user_form=upgrade_user_form,
                            downgrade_user_form=downgrade_user_form,
                            remove_user_form=remove_user_form,
-                           add_airport_form=add_airport_form)
+                           add_airport_form=add_airport_form,
+                           search_airport_form=search_airport_form,
+                           remove_airport_form=remove_airport_form)
 
 
 @app.route("/add_flight_form", methods=["GET", "POST"])
@@ -407,7 +415,7 @@ def add_airport():
 
     if add_airport_form.validate_on_submit():
         name = add_airport_form.airport_name.data
-        iata = add_airport_form.airport_iata.data
+        iata = add_airport_form.airport_iata.data.upper()
         city = add_airport_form.airport_city.data
         longitude = add_airport_form.airport_longitude.data
         latitude = add_airport_form.airport_latitude.data
@@ -420,6 +428,148 @@ def add_airport():
         db.session.commit()
 
         flash("Airport added.")
+
+    return redirect(url_for("input_forms"))
+
+
+@app.route("/search_airport_form", methods=["GET", "POST"])
+@login_required
+@admin_required
+def search_airport():
+    """
+    Separate route for form handling
+     search airport form
+     verify if airport exists
+     redirect to show airport page on validation and submit of form
+    """
+    search_airport_form = searchAirportForm()
+
+    if search_airport_form.validate_on_submit():
+        airport_exists = find_airport(iata=search_airport_form.airport_iata.data.upper())
+
+        if airport_exists is None:
+            flash("Could not find flight.")
+            return redirect(url_for("input_forms"))
+
+        return redirect(url_for("show_airport", airport_id=airport_exists))
+
+    return redirect(url_for("input_forms"))
+
+
+@app.route("/show_airport/<int:airport_id>", methods=["GET", "POST"])
+@login_required
+@admin_required
+def show_airport(airport_id: int):
+    """
+    Route for showing an airport
+     including edit airport form
+     set default dynamically
+    :param airport_id: airport id | int
+    """
+    airport = Airport.query.filter_by(id=airport_id).first()
+    edit_airport_form = editAirportForm()
+    supplement_airport_form = supplementAirportForm()
+
+    edit_airport_form.airport_iata.data = airport.iata.upper() if airport.iata not in ["", None] else "Airport IATA"
+    edit_airport_form.airport_city.data = airport.city if airport.city not in ["", None] else "Airport city"
+    edit_airport_form.airport_name.data = airport.name if airport.name not in ["", None] else "Airport name"
+    edit_airport_form.airport_latitude.data = airport.latitude if airport.latitude not in ["", None] else "Latitude"
+    edit_airport_form.airport_longitude.data = airport.longitude if airport.longitude not in ["", None] else "Longitude"
+
+    return render_template("result.html",
+                           airport_id=airport_id,
+                           edit_airport_form=edit_airport_form,
+                           supplement_airport_form=supplement_airport_form,
+                           airport=airport)
+
+
+@app.route("/edit_airport_form/<int:airport_id>", methods=["GET", "POST"])
+@login_required
+@admin_required
+def edit_airport(airport_id: int):
+    """
+    Separate route for form handling
+     edit airport form
+     update database on validation and submit of form
+    :param airport_id: airport id | int
+    """
+    airport = Airport.query.filter_by(id=airport_id).first()
+    edit_airport_form = editAirportForm()
+
+    if edit_airport_form.validate_on_submit():
+        airport.iata = edit_airport_form.airport_iata.data.upper()
+        airport.name = edit_airport_form.airport_name.data
+        airport.city = edit_airport_form.airport_city.data
+        airport.latitude = edit_airport_form.airport_latitude.data
+        airport.longitude = edit_airport_form.airport_longitude.data
+
+        db.session.add(airport)
+        db.session.commit()
+
+        flash("Airport edited!")
+
+    return redirect(url_for("show_airport", airport_id=airport_id))
+
+
+@app.route("/supplement_airport_form/<int:airport_id>", methods=["GET", "POST"])
+@login_required
+@admin_required
+def supplement_airport(airport_id: int):
+    """
+    Separate route for form handling
+     supplement airport form
+     update database on validation and submit of form
+    :param airport_id: airport id | int
+    """
+    airport = Airport.query.filter_by(id=airport_id).first()
+    image_list = eval(airport.images) if airport.images not in ["", None] else list()
+    supplement_airport_form = supplementAirportForm()
+
+    if supplement_airport_form.validate_on_submit():
+        if not supplement_airport_form.pictures.data:
+            return redirect(url_for("show_airport", airport_id=airport_id))
+
+        for file in supplement_airport_form.pictures.data:
+            file_name = secure_filename(file.filename)
+            image_list.append(save_img(file, file_name))
+
+        airport.images = str(image_list)
+        db.session.add(airport)
+        db.session.commit()
+
+        flash("Images added!")
+
+    return redirect(url_for("show_airport", airport_id=airport_id))
+
+
+@app.route("/remove_airport_form", methods=["GET", "POST"])
+@login_required
+@admin_required
+def remove_airport():
+    """
+    Separate route for form handling
+     remove airport form
+     verify if airport exists
+     update database on validation and submit of form
+    """
+    remove_airport_form = removeAirportForm()
+
+    if remove_airport_form.validate_on_submit():
+        airport_exists = find_airport(remove_airport_form.airport_iata.data.upper())
+
+        if airport_exists is None:
+            flash("Could not find airport.")
+            return redirect(url_for("input_forms"))
+
+        airport = Airport.query.filter(Airport.id == airport_exists).first()
+        images_list = eval(airport.images)
+        for path in images_list:
+            os.remove(path)
+
+        Airport.query.filter(Airport.id == airport_exists).delete()
+        db.session.commit()
+
+        flash("Airport removed.")
 
     return redirect(url_for("input_forms"))
 
@@ -441,3 +591,20 @@ def interactive_map():
         airport_data.append(row._asdict())
 
     return render_template("map.html", airport_data=json.dumps({'airports': airport_data}))
+
+
+@app.route("/airport/<airport_iata>", methods=["GET", "POST"])
+@login_required
+def airport(airport_iata: str):
+    """
+    Airport route including pictures from airport
+    :param airport_iata: airport IATA | str
+    """
+    airport = Airport.query.filter(Airport.iata == airport_iata.upper()).first()
+    proc_images_list = None
+
+    if airport.images not in ["", None]:
+        images_list = eval(airport.images)
+        proc_images_list = ["..\\" + i[i.find("static"):] for i in images_list]
+
+    return render_template("airport.html", airport=airport, images_list=proc_images_list)

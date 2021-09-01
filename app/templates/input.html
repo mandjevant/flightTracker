@@ -137,6 +137,28 @@
                     </form>
                 </div>
             </details>
+            <details>
+                <summary>Search/Edit Airport</summary>
+                <div class="dropped">
+                    <p>Search for a specific airport.</p>
+                    <form method="POST" action="{{ url_for('search_airport') }}">
+                        {{ search_airport_form.csrf_token }}
+                        {{ search_airport_form.airport_iata }}
+                        {{ search_airport_form.submit }}
+                    </form>
+                </div>
+            </details>
+            <details>
+                <summary>Remove Airport</summary>
+                <div class="dropped">
+                    <p>Remove an airport.</p>
+                    <form method="POST" action="{{ url_for('remove_airport') }}">
+                        {{ remove_airport_form.csrf_token }}
+                        {{ remove_airport_form.airport_iata }}
+                        {{ remove_airport_form.submit }}
+                    </form>
+                </div>
+            </details>
         </div>
     </div>
 </div>

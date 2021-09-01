@@ -15,13 +15,13 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container" id="overwrite_container">
     <h1>Search results</h1>
 
     {% if flight %}
     <div class="sub-container">
         <h3>{{ flight["airline"] + flight["flight_number"] + ' | ' + flight["date"]|string }}</h3>
-        <table class="coming_flights">
+        <table class="flights">
             <tr class="col_names">
                 <th>Id</th>
                 <th>Flight number</th>
@@ -67,6 +67,56 @@
     </div>
     {% endif %}
 
-    <p><a class="return" href="{{ url_for('dashboard') }}">Return to the dashboard</a></p>
+    {% if airport %}
+    <div class="sub-container" id="airport_sub">
+        <h3>{{ airport["name"] + ' | ' + airport["iata"] }}</h3>
+        <table class="airport">
+            <tr class="col_names">
+                <th>Id</th>
+                <th>Name</th>
+                <th>Airport IATA</th>
+                <th>City</th>
+                <th>Longitude</th>
+                <th>Latitude</th>
+            </tr>
+            <tr class="col_values">
+                <td>{{ airport["id"] }}</td>
+                <td>{{ airport["name"] }}</td>
+                <td>{{ airport["iata"] }}</td>
+                <td>{{ airport["city"] }}</td>
+                <td>{{ airport["longitude"] }}</td>
+                <td>{{ airport["latitude"] }}</td>
+            </tr>
+        </table>
+        <details>
+            <summary>Edit Airport</summary>
+            <div class="dropped">
+                <p>Edit the airport.</p>
+                <form action="{{ url_for('edit_airport', airport_id=airport_id) }}" method="POST">
+                    {{ edit_airport_form.csrf_token }}
+                    {{ edit_airport_form.airport_name }}
+                    {{ edit_airport_form.airport_iata }}
+                    {{ edit_airport_form.airport_city }}
+                    {{ edit_airport_form.airport_longitude }}
+                    {{ edit_airport_form.airport_latitude }}
+                    {{ edit_airport_form.submit }}
+                </form>
+            </div>
+        </details>
+        <details>
+            <summary>Add images</summary>
+            <div class="dropped">
+                <p>Add images to the airport.</p>
+                <form action="{{ url_for('supplement_airport', airport_id=airport_id) }}" method="POST" enctype="multipart/form-data">
+                    {{ supplement_airport_form.csrf_token }}
+                    {{ supplement_airport_form.pictures }}
+                    {{ supplement_airport_form.submit }}
+                </form>
+            </div>
+        </details>
+    </div>
+    {% endif %}
+
+    <p id="overwrite_p"><a class="return" href="{{ url_for('dashboard') }}">Return to the dashboard</a></p>
 </div>
 {% endblock %}

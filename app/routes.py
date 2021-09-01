@@ -462,6 +462,7 @@ def show_airport(airport_id: int):
     """
     airport = Airport.query.filter_by(id=airport_id).first()
     edit_airport_form = editAirportForm()
+    supplement_airport_form = supplementAirportForm()
 
     edit_airport_form.airport_iata.data = airport.iata if airport.iata not in ["", None] else "Airport IATA"
     edit_airport_form.airport_city.data = airport.city if airport.city not in ["", None] else "Airport city"
@@ -469,7 +470,11 @@ def show_airport(airport_id: int):
     edit_airport_form.airport_latitude.data = airport.latitude if airport.latitude not in ["", None] else "Latitude"
     edit_airport_form.airport_longitude.data = airport.longitude if airport.longitude not in ["", None] else "Longitude"
 
-    return render_template("result.html", airport_id=airport_id, edit_airport_form=edit_airport_form, airport=airport)
+    return render_template("result.html",
+                           airport_id=airport_id,
+                           edit_airport_form=edit_airport_form,
+                           supplement_airport_form=supplement_airport_form,
+                           airport=airport)
 
 
 @app.route("/edit_airport_form/<int:airport_id>", methods=["GET", "POST"])

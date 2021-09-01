@@ -23,3 +23,18 @@ details[open] > summary {
     margin: 45% !important;
     width: max-content;
 }
+
+#overwrite_container {
+    flex-direction: column;
+}
+
+#overwrite_p {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#airport_sub {
+    width: max-content;
+    margin-left: auto;
+    margin-right: auto;
+}

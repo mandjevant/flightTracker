@@ -19,7 +19,7 @@ function addInfoBubble(map, lat, lng, name, iata) {
         ui.addBubble(bubble);
     }, false);
 
-    addMarkerToGroup(group, lat, lng, name + " (" + iata + ")");
+    addMarkerToGroup(group, lat, lng, "<a href=" + "airport/" + iata + ">" + name + " (" + iata + ")" + "</a>");
 }
 
 let platform = new H.service.Platform({

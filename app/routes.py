@@ -4,7 +4,8 @@ from app.models import User, Flight, Airport
 from app.forms import addFlightForm, editFlightForm, removeFlightForm, addUserForm, upgradeUserForm, \
     searchFlightForm, downgradeUserForm, removeUserForm, loginForm, changePasswordForm, addAirportForm, \
     searchAirportForm, editAirportForm, supplementAirportForm, removeAirportForm
-from app.appUtils import flight_number_parser, generate_random_password, admin_check, find_flight, find_airport
+from app.appUtils import flight_number_parser, generate_random_password, admin_check, find_flight, find_airport, \
+    save_img
 from flask_login import current_user, login_user, logout_user, login_required
 from functools import wraps
 from sqlalchemy import func, desc
@@ -495,6 +496,36 @@ def edit_airport(airport_id: int):
         db.session.commit()
 
         flash("Airport edited!")
+
+    return redirect(url_for("show_airport", airport_id=airport_id))
+
+
+@app.route("/supplement_airport_form/<int:airport_id>", methods=["GET", "POST"])
+@login_required
+@admin_required
+def supplement_airport(airport_id: int):
+    """
+    Separate route for form handling
+     supplement airport form
+     update database on validation and submit of form
+    :param airport_id: airport id | int
+    """
+    airport = Airport.query.filter_by(id=airport_id).first()
+    image_list = airport.images
+    supplement_airport_form = supplementAirportForm()
+
+    if supplement_airport_form.validate_on_submit():
+        if not supplement_airport_form.pictures.data:
+            return redirect(url_for("show_airport", airport_id=airport_id))
+
+        for file in supplement_airport_form.pictures.data:
+            path = save_img(file)
+            image_list.append(path)
+
+        db.session.add(airport)
+        db.session.commit()
+
+        flash("Images added!")
 
     return redirect(url_for("show_airport", airport_id=airport_id))
 

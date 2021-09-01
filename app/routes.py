@@ -415,7 +415,7 @@ def add_airport():
 
     if add_airport_form.validate_on_submit():
         name = add_airport_form.airport_name.data
-        iata = add_airport_form.airport_iata.data
+        iata = add_airport_form.airport_iata.data.upper()
         city = add_airport_form.airport_city.data
         longitude = add_airport_form.airport_longitude.data
         latitude = add_airport_form.airport_latitude.data
@@ -445,7 +445,7 @@ def search_airport():
     search_airport_form = searchAirportForm()
 
     if search_airport_form.validate_on_submit():
-        airport_exists = find_airport(iata=search_airport_form.airport_iata.data)
+        airport_exists = find_airport(iata=search_airport_form.airport_iata.data.upper())
 
         if airport_exists is None:
             flash("Could not find flight.")
@@ -470,7 +470,7 @@ def show_airport(airport_id: int):
     edit_airport_form = editAirportForm()
     supplement_airport_form = supplementAirportForm()
 
-    edit_airport_form.airport_iata.data = airport.iata if airport.iata not in ["", None] else "Airport IATA"
+    edit_airport_form.airport_iata.data = airport.iata.upper() if airport.iata not in ["", None] else "Airport IATA"
     edit_airport_form.airport_city.data = airport.city if airport.city not in ["", None] else "Airport city"
     edit_airport_form.airport_name.data = airport.name if airport.name not in ["", None] else "Airport name"
     edit_airport_form.airport_latitude.data = airport.latitude if airport.latitude not in ["", None] else "Latitude"
@@ -497,7 +497,7 @@ def edit_airport(airport_id: int):
     edit_airport_form = editAirportForm()
 
     if edit_airport_form.validate_on_submit():
-        airport.iata = edit_airport_form.airport_iata.data
+        airport.iata = edit_airport_form.airport_iata.data.upper()
         airport.name = edit_airport_form.airport_name.data
         airport.city = edit_airport_form.airport_city.data
         airport.latitude = edit_airport_form.airport_latitude.data
@@ -555,7 +555,7 @@ def remove_airport():
     remove_airport_form = removeAirportForm()
 
     if remove_airport_form.validate_on_submit():
-        airport_exists = find_airport(remove_airport_form.airport_iata.data)
+        airport_exists = find_airport(remove_airport_form.airport_iata.data.upper())
 
         if airport_exists is None:
             flash("Could not find airport.")
@@ -600,7 +600,7 @@ def airport(airport_iata: str):
     Airport route including pictures from airport
     :param airport_iata: airport IATA | str
     """
-    airport = Airport.query.filter(Airport.iata == airport_iata).first()
+    airport = Airport.query.filter(Airport.iata == airport_iata.upper()).first()
     proc_images_list = None
 
     if airport.images not in ["", None]:

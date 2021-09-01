@@ -23,7 +23,7 @@ function addInfoBubble(map, lat, lng, name, iata) {
 }
 
 let platform = new H.service.Platform({
-    apikey: ""
+    apikey: api_key
 });
 
 let defaultLayers = platform.createDefaultLayers();

@@ -3,3 +3,4 @@ conf.ini
 __pycache__
 app/__pycache__
 app/flightTracker.db
+app/static/js/config.js

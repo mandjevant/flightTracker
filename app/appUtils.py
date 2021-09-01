@@ -1,6 +1,6 @@
 from flask_login import current_user
 from app import db
-from app.models import Flight
+from app.models import Flight, Airport
 import typing
 import string
 import random
@@ -47,3 +47,13 @@ def find_flight(call_sign, date) -> typing.Optional[int]:
                                                           airline=courier.upper(),
                                                           date=date).scalar()
     return flight_exists
+
+
+def find_airport(iata) -> typing.Optional[int]:
+    """
+    Find an airport in the database
+    :param iata: airport iata
+    :return: the airport id or None
+    """
+    airport_exists = db.session.query(Airport.id).filter_by(iata=iata).scalar()
+    return airport_exists

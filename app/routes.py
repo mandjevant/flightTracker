@@ -2,8 +2,9 @@ from flask import render_template, flash, redirect, url_for, abort
 from app import app, db
 from app.models import User, Flight, Airport
 from app.forms import addFlightForm, editFlightForm, removeFlightForm, addUserForm, upgradeUserForm, \
-    searchFlightForm, downgradeUserForm, removeUserForm, loginForm, changePasswordForm, addAirportForm
-from app.appUtils import flight_number_parser, generate_random_password, admin_check, find_flight
+    searchFlightForm, downgradeUserForm, removeUserForm, loginForm, changePasswordForm, addAirportForm, \
+    searchAirportForm, editAirportForm, supplementAirportForm, removeAirportForm
+from app.appUtils import flight_number_parser, generate_random_password, admin_check, find_flight, find_airport
 from flask_login import current_user, login_user, logout_user, login_required
 from functools import wraps
 from sqlalchemy import func, desc
@@ -420,6 +421,107 @@ def add_airport():
         db.session.commit()
 
         flash("Airport added.")
+
+    return redirect(url_for("input_forms"))
+
+
+@app.route("/search_airport_form", methods=["GET", "POST"])
+@login_required
+@admin_required
+def search_airport():
+    """
+    Separate route for form handling
+     search airport form
+     verify if airport exists
+     redirect to show airport page on validation and submit of form
+    """
+    search_airport_form = searchAirportForm()
+
+    if search_airport_form.validate_on_submit():
+        airport_exists = find_airport(iata=search_airport_form.airport_iata.data)
+
+        if airport_exists is None:
+            flash("Could not find flight.")
+            return redirect(url_for("input_forms"))
+
+        return redirect(url_for("show_airport", airport_id=airport_exists))
+
+    return redirect(url_for("input_forms"))
+
+
+@app.route("/show_airport/<int:airport_id>", methods=["GET", "POST"])
+@login_required
+@admin_required
+def show_airport(airport_id: int):
+    """
+    Route for showing an airport
+     including edit airport form
+     set default dynamically
+    :param airport_id: airport id | int
+    """
+    airport = Airport.query.filter_by(id=airport_id).first()
+    edit_airport_form = editAirportForm()
+
+    edit_airport_form.airport_iata.data = airport.iata if airport.iata not in ["", None] else "Airport IATA"
+    edit_airport_form.airport_city.data = airport.city if airport.city not in ["", None] else "Airport city"
+    edit_airport_form.airport_name.data = airport.name if airport.name not in ["", None] else "Airport name"
+    edit_airport_form.airport_latitude.data = airport.latitude if airport.latitude not in ["", None] else "Latitude"
+    edit_airport_form.airport_longitude.data = airport.longitude if airport.longitude not in ["", None] else "Longitude"
+
+    return render_template("result.html", airport_id=airport_id, edit_airport_form=edit_airport_form, airport=airport)
+
+
+@app.route("/edit_airport_form/<int:airport_id>", methods=["GET", "POST"])
+@login_required
+@admin_required
+def edit_airport(airport_id: int):
+    """
+    Separate route for form handling
+     edit airport form
+     update database on validation and submit of form
+    :param airport_id: airport id | int
+    """
+    airport = Airport.query.filter_by(id=airport_id).first()
+    edit_airport_form = editAirportForm()
+
+    if edit_airport_form.validate_on_submit():
+        airport.iata = edit_airport_form.airport_iata.data
+        airport.name = edit_airport_form.airport_name.data
+        airport.city = edit_airport_form.airport_city.data
+        airport.latitude = edit_airport_form.airport_latitude.data
+        airport.longitude = edit_airport_form.airport_longitude.data
+
+        db.session.add(airport)
+        db.session.commit()
+
+        flash("Airport edited!")
+
+    return redirect(url_for("show_airport", airport_id=airport_id))
+
+
+@app.route("/remove_airport_form", methods=["GET", "POST"])
+@login_required
+@admin_required
+def remove_airport():
+    """
+    Separate route for form handling
+     remove airport form
+     verify if airport exists
+     update database on validation and submit of form
+    """
+    remove_airport_form = removeAirportForm()
+
+    if remove_airport_form.validate_on_submit():
+        airport_exists = find_airport(remove_airport_form.airport_iata.data)
+
+        if airport_exists is None:
+            flash("Could not find airport.")
+            return redirect(url_for("input_forms"))
+
+        Airport.query.filter(Airport.id == airport_exists).delete()
+        db.session.commit()
+
+        flash("Airport removed.")
 
     return redirect(url_for("input_forms"))
 

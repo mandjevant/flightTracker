@@ -20,7 +20,8 @@
         {% for message in messages %}
             {{ message }}
         {% endfor %}
-        <button type="button" class="close" onclick="delete_flash(this)">close</button>
+        <button type="button" class="close" onclick="delete_flash(this)">{{ "close"
+        if current_user.language == "english" else "blisko" }}</button>
         </div>
     {% endif %}
 {% endwith %}
@@ -60,7 +61,8 @@
         {% if not current_user.is_anonymous %}
         <ul class="menu-main-nav">
             <li>
-                <a href="{{ url_for('dashboard') }}" title="Dashboard" class="nav-link">Dashboard</a>
+                <a href="{{ url_for('dashboard') }}" title="Dashboard" class="nav-link">
+                    {{ "Dashboard" if current_user.language == "english" else "Deska rozdzielcza" }}</a>
             </li>
             {% if current_user.is_admin() %}
             <li>
@@ -68,19 +70,23 @@
             </li>
             {% endif %}
             <li>
-                <a href="{{ url_for('interactive_map') }}" title="Map" class="nav-link">Map</a>
+                <a href="{{ url_for('interactive_map') }}" title="Map" class="nav-link">
+                    {{ "Map" if current_user.language == "english" else "Mapa" }}</a>
             </li>
             <li>
-                <a href="{{ url_for('profile') }}" title="Profile" class="nav-link">Profile</a>
+                <a href="{{ url_for('profile') }}" title="Profile" class="nav-link">
+                    {{ "Profile" if current_user.language == "english" else "Profil" }}</a>
             </li>
             <li>
-                <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+                <a href="{{ url_for('logout') }}" class="nav-link">
+                    {{ "Logout" if current_user.language == "english" else "Wyloguj" }}</a>
             </li>
         </ul>
         {% else %}
         <ul class="menu-main-nav">
             <li>
-                <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+                <a href="{{ url_for('login') }}" class="nav-link">
+                    {{ "Login" if current_user.language == "english" else "Zaloguj" }}</a>
             </li>
         </ul>
         {% endif %}

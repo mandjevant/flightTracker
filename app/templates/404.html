@@ -9,12 +9,13 @@
 {% endblock %}
 
 {% block title %}
-<title>Error</title>
+<title>{{ "Error" if current_user.language == "english" else "Błąd" }}</title>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-    <h1>404 Error | Not Found</h1>
-    <p><a class="error" href="{{ url_for('dashboard') }}">Return to the dashboard</a></p>
+    <h1>{{ "404 Error | Not Found" if current_user.language == "english" else "404 Błąd | Nie znaleziono" }}</h1>
+    <p><a class="error" href="{{ url_for('dashboard') }}">{{ "Return to the dashboard"
+    if current_user.language == "english" else "Powrót do panelu" }}</a></p>
 </div>
 {% endblock %}

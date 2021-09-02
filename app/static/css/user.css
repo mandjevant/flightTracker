@@ -100,3 +100,12 @@ details > summary:hover {
 details[open] > summary {
     background-color: #456281;
 }
+
+li {
+    display: flex;
+    flex-direction: row;
+}
+
+li > label {
+
+}

@@ -2,7 +2,8 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed
 from flask import flash
 from flask_login import current_user
-from wtforms import StringField, SubmitField, DateField, PasswordField, BooleanField, FloatField, MultipleFileField
+from wtforms import StringField, SubmitField, DateField, PasswordField, BooleanField, FloatField, MultipleFileField, \
+    RadioField
 from wtforms.validators import DataRequired, ValidationError
 from app.models import User
 import datetime
@@ -267,7 +268,17 @@ class changePasswordForm(FlaskForm):
     new_password = StringField(label="New password",
                                validators=[DataRequired(), NotEqualTo("current_password")],
                                description="New password")
-    submit = SubmitField("Change password")
+    submit = SubmitField("Change password / Zmień hasło")
+
+
+class changeLanguageForm(FlaskForm):
+    """
+    FlaskForm for changing the language
+    """
+    language = RadioField(label="Language",
+                          validators=[DataRequired()],
+                          choices=[("english", "English"), ("polskie", "Polskie")])
+    submit = SubmitField("Change language / Zmień język")
 
 
 class addAirportForm(FlaskForm):

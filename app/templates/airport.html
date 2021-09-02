@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block title %}
-<title>Airport</title>
+<title>{{ "Airport" if current_user.language == "english" else "Lotnisko" }}</title>
 {% endblock %}
 
 {% block content %}
@@ -23,6 +23,7 @@
     {% endfor %}
     {% endif %}
 
-    <p><a class="error" href="{{ url_for('dashboard') }}">Return to the dashboard</a></p>
+    <p><a class="error" href="{{ url_for('dashboard') }}">{{ "Return to dashboard"
+    if current_user.language == "english" else "Powrót do panelu" }}</a></p>
 </div>
 {% endblock %}

@@ -1,9 +1,9 @@
-from flask import render_template, flash, redirect, url_for, abort, request
+from flask import render_template, flash, redirect, url_for, abort
 from app import app, db
 from app.models import User, Flight, Airport
 from app.forms import addFlightForm, editFlightForm, removeFlightForm, addUserForm, upgradeUserForm, \
-    searchFlightForm, downgradeUserForm, removeUserForm, loginForm, changePasswordForm, addAirportForm, \
-    searchAirportForm, editAirportForm, supplementAirportForm, removeAirportForm
+    searchFlightForm, downgradeUserForm, removeUserForm, loginForm, changePasswordForm, changeLanguageForm, \
+    addAirportForm, searchAirportForm, editAirportForm, supplementAirportForm, removeAirportForm
 from app.appUtils import flight_number_parser, generate_random_password, admin_check, find_flight, find_airport, \
     save_img
 from flask_login import current_user, login_user, logout_user, login_required
@@ -44,8 +44,11 @@ def profile():
      including form for changing password
     """
     change_password_form = changePasswordForm()
+    change_language_form = changeLanguageForm()
 
-    return render_template("user.html", change_password_form=change_password_form)
+    return render_template("user.html",
+                           change_password_form=change_password_form,
+                           change_language_form=change_language_form)
 
 
 @app.route("/change_password", methods=["POST"])
@@ -64,7 +67,29 @@ def change_password():
 
         db.session.commit()
 
-        flash("Password successfully changed!")
+        flash("Password successfully changed!" if current_user.language == "english" else "Hasło poprawnie zmienione!")
+
+    return redirect(url_for("profile"))
+
+
+@app.route("/change_language", methods=["POST"])
+@login_required
+def change_language():
+    """
+    Separate route for form handling
+     change language form
+     update database on validation and submit of form
+    """
+    change_language_form = changeLanguageForm()
+
+    if change_language_form.validate_on_submit():
+        active_user = User.query.filter_by(username=current_user.username).first()
+        active_user.language = change_language_form.language.data
+
+        db.session.add(active_user)
+        db.session.commit()
+
+        flash("Language successfully changed!" if current_user.language == "english" else "Pomyślnie zmieniono język!")
 
     return redirect(url_for("profile"))
 
@@ -144,7 +169,8 @@ def login():
         user = User.query.filter_by(username=login_form.username.data).first()
 
         if user is None or not user.check_password(login_form.password.data):
-            flash("Invalid username or password")
+            flash("Invalid username or password"
+                  if current_user.language == "english" else "Nieprawidłowa nazwa użytkownika lub hasło")
             return redirect(url_for("login"))
 
         login_user(user, remember=login_form.remember_me.data)

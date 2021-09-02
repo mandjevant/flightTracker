@@ -12,6 +12,7 @@ from sqlalchemy import func, desc, asc
 from werkzeug.utils import secure_filename
 import datetime
 import json
+import ast
 import os
 
 
@@ -576,7 +577,7 @@ def supplement_airport(airport_id: int):
     :param airport_id: airport id | int
     """
     airport = Airport.query.filter_by(id=airport_id).first()
-    image_list = eval(airport.images) if airport.images not in ["", None] else list()
+    image_list = ast.literal_eval(airport.images) if airport.images not in ["", None] else list()
     supplement_airport_form = supplementAirportForm()
 
     if supplement_airport_form.validate_on_submit():
@@ -616,7 +617,7 @@ def remove_airport():
             return redirect(url_for("input_forms"))
 
         airport = Airport.query.filter(Airport.id == airport_exists).first()
-        images_list = eval(airport.images)
+        images_list = ast.literal_eval(airport.images)
         for path in images_list:
             os.remove(path)
 
@@ -658,7 +659,7 @@ def airport(airport_iata: str):
     proc_images_list = None
 
     if airport.images not in ["", None]:
-        images_list = eval(airport.images)
+        images_list = ast.literal_eval(airport.images)
         proc_images_list = ["..\\" + i[i.find("static"):] for i in images_list]
 
     return render_template("airport.html", airport=airport, images_list=proc_images_list)

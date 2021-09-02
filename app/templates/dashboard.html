@@ -9,25 +9,25 @@
 {% endblock %}
 
 {% block title %}
-<title>Dashboard</title>
+<title>{{ "Dashboard" if current_user.language == "english" else "Deska rozdzielcza" }}</title>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-<h1>Flights Dashboard</h1>
+<h1>{{ "Flights Dashboard" if current_user.language == "english" else "Tablica lotów" }}</h1>
 
 {% if coming_flights %}
     <div class="invisible-fullwidth">
         <div class="sub-container" id="center-in-invisible-div">
-            <h3>Upcoming flights</h3>
+            <h3>{{ "Upcoming flights" if current_user.language == "english" else "Nadchodzące loty" }}</h3>
             <table class="coming_flights">
                 <tr class="col_names">
-                    <th>Destination</th>
-                    <th>Date</th>
-                    <th>Flight number</th>
-                    <th>Departure time</th>
-                    <th>Arrival time</th>
-                    <th>Aircraft</th>
+                    <th>{{ "Destination" if current_user.language == "english" else "Miejsce docelowe"}}</th>
+                    <th>{{ "Date" if current_user.language == "english" else "Data"}}</th>
+                    <th>{{ "Flight number" if current_user.language == "english" else "Numer lotu"}}</th>
+                    <th>{{ "Departure time" if current_user.language == "english" else "Godzina odjazdu"}}</th>
+                    <th>{{ "Arrival time" if current_user.language == "english" else "Czas przybycia"}}</th>
+                    <th>{{ "Aircraft" if current_user.language == "english" else "Samolot"}}</th>
                 </tr>
                 {% for row in coming_flights %}
                     <tr class="col_values">
@@ -47,15 +47,15 @@
 {% if recently_visited %}
     <div class="invisible-fullwidth">
         <div class="sub-container" id="center-in-invisible-div">
-            <h3>Recent flights</h3>
+            <h3>{{ "Recent flights" if current_user.language == "english" else "Ostatnie loty" }}</h3>
             <table class="recently_visited">
                 <tr class="col_names">
-                    <th>Destination</th>
-                    <th>Date</th>
-                    <th>Flight number</th>
-                    <th>Departure time</th>
-                    <th>Arrival time</th>
-                    <th>Aircraft</th>
+                    <th>{{ "Destination" if current_user.language == "english" else "Miejsce docelowe"}}</th>
+                    <th>{{ "Date" if current_user.language == "english" else "Data"}}</th>
+                    <th>{{ "Flight number" if current_user.language == "english" else "Numer lotu"}}</th>
+                    <th>{{ "Departure time" if current_user.language == "english" else "Godzina odjazdu"}}</th>
+                    <th>{{ "Arrival time" if current_user.language == "english" else "Czas przybycia"}}</th>
+                    <th>{{ "Aircraft" if current_user.language == "english" else "Samolot"}}</th>
                 </tr>
                 {% for row in recently_visited %}
                     <tr class="col_values">
@@ -74,11 +74,12 @@
 
 {% if most_visisted %}
     <div class="sub-container">
-        <h3>Most visited destinations</h3>
+        <h3>{{ "Most visited destinations"
+        if current_user.language == "english" else "Najczęściej odwiedzane miejsca" }}</h3>
         <table class="most_visisted">
             <tr class="col_names">
-                <th>Destination</th>
-                <th>Visits</th>
+                <th>{{ "Destination" if current_user.language == "english" else "Miejsce docelowe"}}</th>
+                <th>{{ "Visits" if current_user.language == "english" else "Odwiedziny"}}</th>
             </tr>
             {% for row in most_visisted %}
                 <tr class="col_values">
@@ -92,11 +93,12 @@
 
 {% if least_visited %}
     <div class="sub-container">
-        <h3>Least visited destinations</h3>
+        <h3>{{ "Least visited destinations"
+        if current_user.language == "english" else "Najrzadziej odwiedzane miejsca" }}</h3>
         <table class="least_visited">
             <tr class="col_names">
-                <th>Destination</th>
-                <th>Visits</th>
+                <th>{{ "Destination" if current_user.language == "english" else "Miejsce docelowe"}}</th>
+                <th>{{ "Visits" if current_user.language == "english" else "Odwiedziny"}}</th>
             </tr>
             {% for row in least_visited %}
                 <tr class="col_values">
@@ -111,24 +113,25 @@
 {% if longest_flight or shortest_flight %}
     <div class="sub-container">
         {% if longest_flight and shortest_flight %}
-            <h3>Longest flight and shortest flight</h3>
+            <h3>{{ "Longest flight and shortest flight"
+            if current_user.language == "english" else "Najdłuższy lot i najkrótszy lot" }}</h3>
         {% elif not shortest_flight %}
-            <h3>Longest flight</h3>
+            <h3>{{ "Longest flight" if current_user.language == "english" else "Najdłuższy lot" }}</h3>
         {% else %}
-            <h3>Shortest flight</h3>
+            <h3>{{ "Shortest flight" if current_user.language == "english" else "Najkrótszy lot" }}</h3>
         {% endif %}
 
         <table>
             <tr class="col_names">
                 <th></th>
-                <th>Destination</th>
-                <th>Date</th>
-                <th>Flight duration</th>
-                <th>Aircraft</th>
+                <th>{{ "Destination" if current_user.language == "english" else "Miejsce docelowe"}}</th>
+                <th>{{ "Date" if current_user.language == "english" else "Data"}}</th>
+                <th>{{ "Flight duration" if current_user.language == "english" else "Czas lotu"}}</th>
+                <th>{{ "Aircraft" if current_user.language == "english" else "Samolot"}}</th>
             </tr>
             {% if longest_flight %}
                 <tr>
-                    <th>Longest flight</th>
+                    <th>{{ "Longest flight" if current_user.language == "english" else "Najdłuższy lot" }}</th>
                     <td>{{ longest_flight[0]["flight_to"] }}</td>
                     <td>{{ longest_flight[0]["date"] }}</td>
                     <td>{{ longest_flight[0]["flight_time"] }}</td>
@@ -141,7 +144,7 @@
 
             {% if shortest_flight %}
                 <tr>
-                    <th>Shortest flight</th>
+                    <th>{{ "Shortest flight" if current_user.language == "english" else "Najkrótszy lot" }}</th>
                     <td>{{ shortest_flight[0]["flight_to"] }}</td>
                     <td>{{ shortest_flight[0]["date"] }}</td>
                     <td>{{ shortest_flight[0]["flight_time"] }}</td>

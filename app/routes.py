@@ -8,8 +8,9 @@ from app.appUtils import flight_number_parser, generate_random_password, admin_c
     save_img
 from flask_login import current_user, login_user, logout_user, login_required
 from functools import wraps
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, asc
 from werkzeug.utils import secure_filename
+import datetime
 import json
 import os
 
@@ -75,26 +76,53 @@ def dashboard():
     Dashboard route
      including data for tables
     """
-    top_ten_most_visited_destinations = \
+    coming_flights = db.session.query(Flight.flight_to,
+                                      Flight.date,
+                                      Flight.flight_number,
+                                      Flight.scheduled_time_departure,
+                                      Flight.scheduled_time_arrival,
+                                      Flight.aircraft).order_by(Flight.date).limit(10).all()
+
+    recently_visited = db.session.query(Flight.flight_to,
+                                        Flight.date,
+                                        Flight.flight_number,
+                                        Flight.scheduled_time_departure,
+                                        Flight.actual_time_departure,
+                                        Flight.scheduled_time_arrival,
+                                        Flight.actual_time_arrival,
+                                        Flight.aircraft).filter(
+        Flight.date < datetime.date.today()).order_by(Flight.date).limit(10).all()
+
+    most_visisted = \
         db.session.query(Flight.flight_to,
                          func.count(Flight.flight_to).label("visits")
                          ).group_by(Flight.flight_to).order_by(desc("visits")).limit(10).all()
 
-    alter_top_destinations = \
+    least_visited = \
         db.session.query(Flight.flight_to,
                          func.count(Flight.flight_to).label("visits")
-                         ).group_by(Flight.flight_to).order_by("visits").limit(10).all()
+                         ).group_by(Flight.flight_to).order_by(asc("visits")).limit(10).all()
 
-    coming_flights = db.session.query(Flight.flight_to, Flight.date, Flight.flight_number).order_by(Flight.date).limit(
-        20).all()
+    longest_flight = db.session.query(Flight.flight_to,
+                                      Flight.date,
+                                      Flight.flight_time,
+                                      Flight.aircraft).order_by(desc(Flight.flight_time)).limit(1).all()
+    shortest_flight = db.session.query(Flight.flight_to,
+                                       Flight.date,
+                                       Flight.flight_time,
+                                       Flight.aircraft).filter(
+        Flight.flight_time > 0).order_by(asc(Flight.flight_time)).limit(1).all()
 
     normal_users = User.query.filter_by(role="viewer").order_by(User.username).all()
     admin_users = User.query.filter_by(role="admin").order_by(User.username).all()
 
     return render_template("dashboard.html",
-                           top_ten_most_visited_destinations=top_ten_most_visited_destinations,
-                           alter_top_destinations=alter_top_destinations,
                            coming_flights=coming_flights,
+                           recently_visited=recently_visited,
+                           most_visisted=most_visisted,
+                           least_visited=least_visited,
+                           longest_flight=longest_flight,
+                           shortest_flight=shortest_flight,
                            normal_users=normal_users,
                            admin_users=admin_users)
 

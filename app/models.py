@@ -11,6 +11,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     role = db.Column(db.String(64), default="viewer")
+    language = db.Column(db.String(64), default="english")
 
     def __repr__(self) -> str:
         """

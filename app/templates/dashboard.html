@@ -16,59 +16,139 @@
 <div class="container">
 <h1>Flights Dashboard</h1>
 
-{% if top_ten_most_visited_destinations %}
-    <div class="sub-container">
-        <h3>Top ten most visited destinations</h3>
-        <table class="top_ten_most_visited_destinations">
-            <tr class="col_names">
-                <th>Destination</th>
-                <th>Visits</th>
-            </tr>
-            {% for row in top_ten_most_visited_destinations %}
-                <tr class="col_values">
-                    <td>{{ row["flight_to"] }}</td>
-                    <td>{{ row["visits"] }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    </div>
-{% endif %}
-
-{% if alter_top_destinations %}
-    <div class="sub-container">
-        <h3>Alter top destinations</h3>
-        <table class="alter_top_destinations">
-            <tr class="col_names">
-                <th>Destination</th>
-                <th>Visits</th>
-            </tr>
-            {% for row in alter_top_destinations %}
-                <tr class="col_values">
-                    <td>{{ row["flight_to"] }}</td>
-                    <td>{{ row["visits"] }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    </div>
-{% endif %}
-
 {% if coming_flights %}
+    <div class="invisible-fullwidth">
+        <div class="sub-container" id="center-in-invisible-div">
+            <h3>Upcoming flights</h3>
+            <table class="coming_flights">
+                <tr class="col_names">
+                    <th>Destination</th>
+                    <th>Date</th>
+                    <th>Flight number</th>
+                    <th>Departure time</th>
+                    <th>Arrival time</th>
+                    <th>Aircraft</th>
+                </tr>
+                {% for row in coming_flights %}
+                    <tr class="col_values">
+                        <td>{{ row["flight_to"] }}</td>
+                        <td>{{ row["date"] }}</td>
+                        <td>{{ row["flight_number"] }}</td>
+                        <td>{{ row["scheduled_time_departure"] }}</td>
+                        <td>{{ row["scheduled_time_arrival"] }}</td>
+                        <td>{{ row["aircraft"] }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endif %}
+
+{% if recently_visited %}
+    <div class="invisible-fullwidth">
+        <div class="sub-container" id="center-in-invisible-div">
+            <h3>Recent flights</h3>
+            <table class="recently_visited">
+                <tr class="col_names">
+                    <th>Destination</th>
+                    <th>Date</th>
+                    <th>Flight number</th>
+                    <th>Departure time</th>
+                    <th>Arrival time</th>
+                    <th>Aircraft</th>
+                </tr>
+                {% for row in recently_visited %}
+                    <tr class="col_values">
+                        <td>{{ row["flight_to"] }}</td>
+                        <td>{{ row["date"] }}</td>
+                        <td>{{ row["flight_number"] }}</td>
+                        <td>{{ row["actual_time_departure"] if row["actual_time_departure"] not in ["", None] else row["scheduled_time_departure"]}}</td>
+                        <td>{{ row["actual_time_arrival"] if row["actual_time_arrival"] not in ["", None] else row["scheduled_time_arrival"]}}</td>
+                        <td>{{ row["aircraft"] }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endif %}
+
+{% if most_visisted %}
     <div class="sub-container">
-        <h3>Upcoming flights</h3>
-        <table class="coming_flights">
+        <h3>Most visited destinations</h3>
+        <table class="most_visisted">
             <tr class="col_names">
+                <th>Destination</th>
+                <th>Visits</th>
+            </tr>
+            {% for row in most_visisted %}
+                <tr class="col_values">
+                    <td>{{ row["flight_to"] }}</td>
+                    <td>{{ row["visits"] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endif %}
+
+{% if least_visited %}
+    <div class="sub-container">
+        <h3>Least visited destinations</h3>
+        <table class="least_visited">
+            <tr class="col_names">
+                <th>Destination</th>
+                <th>Visits</th>
+            </tr>
+            {% for row in least_visited %}
+                <tr class="col_values">
+                    <td>{{ row["flight_to"] }}</td>
+                    <td>{{ row["visits"] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endif %}
+
+{% if longest_flight or shortest_flight %}
+    <div class="sub-container">
+        {% if longest_flight and shortest_flight %}
+            <h3>Longest flight and shortest flight</h3>
+        {% elif not shortest_flight %}
+            <h3>Longest flight</h3>
+        {% else %}
+            <h3>Shortest flight</h3>
+        {% endif %}
+
+        <table>
+            <tr class="col_names">
+                <th></th>
                 <th>Destination</th>
                 <th>Date</th>
-                <th>Flight number</th>
+                <th>Flight duration</th>
+                <th>Aircraft</th>
             </tr>
-            {% for row in coming_flights %}
-                <tr class="col_values">
-                    <td>{{ row["flight_to"] }}</td>
-                    <td>{{ row["date"] }}</td>
-                    <td>{{ row["flight_number"] }}</td>
+            {% if longest_flight %}
+                <tr>
+                    <th>Longest flight</th>
+                    <td>{{ longest_flight[0]["flight_to"] }}</td>
+                    <td>{{ longest_flight[0]["date"] }}</td>
+                    <td>{{ longest_flight[0]["flight_time"] }}</td>
+                    <td>{{ longest_flight[0]["aircraft"] }}</td>
                 </tr>
-            {% endfor %}
-        </table>
+                {% if not shortest_flight %}
+                    </table>
+                {% endif %}
+            {% endif %}
+
+            {% if shortest_flight %}
+                <tr>
+                    <th>Shortest flight</th>
+                    <td>{{ shortest_flight[0]["flight_to"] }}</td>
+                    <td>{{ shortest_flight[0]["date"] }}</td>
+                    <td>{{ shortest_flight[0]["flight_time"] }}</td>
+                    <td>{{ shortest_flight[0]["aircraft"] }}</td>
+                </tr>
+            </table>
+        {% endif %}
     </div>
 {% endif %}
 
@@ -113,6 +193,7 @@
         </table>
     </div>
 {% endif %}
+
 {% endif %}
 
 </div>

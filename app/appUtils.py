@@ -50,6 +50,27 @@ def find_flight(call_sign, date) -> typing.Optional[int]:
     return flight_exists
 
 
+def _fill_flight(flight_a: Flight):
+    """
+    Fill flight database entry
+     flight_from and flight_to
+     from other database entries
+     with identical flight number and airline
+    :param flight_a: new db entry | Flight
+    """
+    flight_b = Flight.query.filter(Flight.id != flight_a.id,
+                                   Flight.flight_number == flight_a.flight_number,
+                                   Flight.airline == flight_a.airline,
+                                   Flight.flight_from is not None,
+                                   Flight.flight_to != "Destination...").first()
+
+    if flight_b is not None:
+        flight_a.flight_from = flight_b.flight_from
+        flight_a.flight_to = flight_b.flight_to
+
+        db.session.commit()
+
+
 def find_airport(iata) -> typing.Optional[int]:
     """
     Find an airport in the database

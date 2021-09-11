@@ -5,7 +5,7 @@ from app.forms import addFlightForm, editFlightForm, removeFlightForm, addUserFo
     searchFlightForm, downgradeUserForm, removeUserForm, loginForm, changePasswordForm, changeLanguageForm, \
     addAirportForm, searchAirportForm, editAirportForm, supplementAirportForm, removeAirportForm
 from app.appUtils import flight_number_parser, generate_random_password, admin_check, find_flight, find_airport, \
-    save_img
+    save_img, _fill_flight
 from flask_login import current_user, login_user, logout_user, login_required
 from functools import wraps
 from sqlalchemy import func, desc, asc
@@ -242,13 +242,18 @@ def add_flight():
         arrival_airport = add_flight_form.flightTo.data
         aircraft = add_flight_form.aircraft.data
 
-        db.session.add(Flight(flight_number=number,
-                              airline=courier.upper(),
-                              date=date,
-                              flight_from=departure_airport,
-                              flight_to=arrival_airport,
-                              aircraft=aircraft))
+        flight_a = Flight(flight_number=number,
+                          airline=courier.upper(),
+                          date=date,
+                          flight_from=departure_airport,
+                          flight_to=arrival_airport,
+                          aircraft=aircraft)
+
+        db.session.add(flight_a)
         db.session.commit()
+
+        if (departure_airport in ["", "None", None]) or (arrival_airport in ["", "None", None, "Destination..."]):
+            _fill_flight(flight_a=flight_a)
 
         flash("Flight added.")
 

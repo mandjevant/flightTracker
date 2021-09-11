@@ -47,4 +47,6 @@ login = LoginManager(app=app)
 login.login_view = "login"
 app.secret_key = Config.conf.get('CONSTANTS', 'SECRET_KEY')
 
+aviationStackAccessKey = Config.conf.get('AVIATIONSTACKAPI', 'ACCESS_KEY')
+
 from app import routes, models, errors

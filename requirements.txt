@@ -11,3 +11,4 @@ flask_wtf~=0.15.1
 flask_sqlalchemy~=2.5.1
 SQLAlchemy~=1.4.23
 APScheduler~=3.7.0
+Flask-APScheduler~=1.12.2

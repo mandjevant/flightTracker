@@ -1,11 +1,12 @@
 from flask import render_template, flash, redirect, url_for, abort
-from app import app, db
+from app import app, db, scheduler
 from app.models import User, Flight, Airport
 from app.forms import addFlightForm, editFlightForm, removeFlightForm, addUserForm, upgradeUserForm, \
     searchFlightForm, downgradeUserForm, removeUserForm, loginForm, changePasswordForm, changeLanguageForm, \
     addAirportForm, searchAirportForm, editAirportForm, supplementAirportForm, removeAirportForm
 from app.appUtils import flight_number_parser, generate_random_password, admin_check, find_flight, find_airport, \
     save_img, _fill_flight
+from app.tasks import fill_actual_time_task
 from flask_login import current_user, login_user, logout_user, login_required
 from functools import wraps
 from sqlalchemy import func, desc, asc
@@ -251,6 +252,22 @@ def add_flight():
 
         db.session.add(flight_a)
         db.session.commit()
+
+        run_datetime = datetime.datetime.combine(date, (datetime.datetime.min +
+                                                        datetime.timedelta(hours=13, minutes=57)).time())
+
+        scheduler.add_job(
+            func=fill_actual_time_task,
+            trigger="date",
+            run_date=run_datetime,
+            id=f"Fill actual time task for {courier.upper()}{number}",
+            kwargs={"flight_id": flight_a.id,
+                    "flight_date": date,
+                    "courier": courier.upper(),
+                    "flight_number": number}
+        )
+
+        # fill_actual_time_task(flight_a.id, date, courier.upper(), number)
 
         if (departure_airport in ["", "None", None]) or (arrival_airport in ["", "None", None, "Destination..."]):
             _fill_flight(flight_a=flight_a)

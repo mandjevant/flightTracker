@@ -75,7 +75,7 @@ class Flight(db.Model):
     flight_to = db.Column(db.String)
     airline = db.Column(db.String)
     aircraft = db.Column(db.VARCHAR)
-    flight_time = db.Column(db.INT)
+    flight_time = db.Column(db.Time)
     date = db.Column(db.Date)
     scheduled_time_departure = db.Column(db.DateTime)
     actual_time_departure = db.Column(db.DateTime)

@@ -255,7 +255,7 @@ def add_flight():
 
         if date >= datetime.datetime.now().date():
             run_datetime = datetime.datetime.combine(date, (datetime.datetime.min +
-                                                            datetime.timedelta(hours=13, minutes=57)).time())
+                                                            datetime.timedelta(hours=23, minutes=59)).time())
 
             scheduler.add_job(
                 func=fill_actual_time_task,

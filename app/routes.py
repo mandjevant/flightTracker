@@ -257,18 +257,16 @@ def add_flight():
             run_datetime = datetime.datetime.combine(date, (datetime.datetime.min +
                                                             datetime.timedelta(hours=13, minutes=57)).time())
 
-        scheduler.add_job(
-            func=fill_actual_time_task,
-            trigger="date",
-            run_date=run_datetime,
-            id=f"Fill actual time task for {courier.upper()}{number}",
-            kwargs={"flight_id": flight_a.id,
-                    "flight_date": date,
-                    "courier": courier.upper(),
-                    "flight_number": number}
-        )
-
-        # fill_actual_time_task(flight_a.id, date, courier.upper(), number)
+            scheduler.add_job(
+                func=fill_actual_time_task,
+                trigger="date",
+                run_date=run_datetime,
+                id=f"Fill actual time task for {courier.upper()}{number}",
+                kwargs={"flight_id": flight_a.id,
+                        "flight_date": date,
+                        "courier": courier.upper(),
+                        "flight_number": number}
+            )
 
         if (departure_airport in ["", "None", None]) or (arrival_airport in ["", "None", None, "Destination..."]):
             _fill_flight(flight_a=flight_a)

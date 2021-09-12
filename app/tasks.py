@@ -5,13 +5,22 @@ from datetime import datetime, timedelta
 
 
 def fill_actual_time_task(flight_id, flight_date, courier, flight_number):
+    """
+    Task to add actual flight times to flights in database
+     handle api call
+     parse json
+     add to database
+    :param flight_id: flight id
+    :param flight_date: flight date
+    :param courier: courier
+    :param flight_number: flight number
+    """
     req = aviationstackApi()
     req.add_app_credentials()
     req.add_flight_iata(courier=courier, number=flight_number)
     r = req.get()
     json_data = r.json()
     data = json_data["data"]
-    print(data)
 
     for flight in data:
         if flight["flight_date"] == str(flight_date):

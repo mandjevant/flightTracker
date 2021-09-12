@@ -253,8 +253,9 @@ def add_flight():
         db.session.add(flight_a)
         db.session.commit()
 
-        run_datetime = datetime.datetime.combine(date, (datetime.datetime.min +
-                                                        datetime.timedelta(hours=13, minutes=57)).time())
+        if date >= datetime.datetime.now().date():
+            run_datetime = datetime.datetime.combine(date, (datetime.datetime.min +
+                                                            datetime.timedelta(hours=13, minutes=57)).time())
 
         scheduler.add_job(
             func=fill_actual_time_task,
